@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import '../constants/app_constants.dart';
 
 class AuthService {
   final firebase_auth.FirebaseAuth _firebaseAuth;
 
   AuthService(this._firebaseAuth);
+
+  firebase_auth.User? get currentUser => _firebaseAuth.currentUser;
 
   Future<String?> signIn(String email, String password) async {
     try {

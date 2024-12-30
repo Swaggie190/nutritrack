@@ -57,9 +57,9 @@ class MealRepository {
           .where('consumedAt', isLessThan: endOfDay.toIso8601String())
           .get();
 
-      return querySnapshot.docs
-          .map((doc) => Meal.fromMap(doc.data()))
-          .fold(0, (sum, meal) => sum + meal.calories);
+      final meals =
+          querySnapshot.docs.map((doc) => Meal.fromMap(doc.data())).toList();
+      return meals.fold<int>(0, (sum, meal) => sum + meal.calories);
     } catch (e) {
       throw Exception('Failed to get total calories: $e');
     }

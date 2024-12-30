@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:nutritrack/widgets/custom_bottom_nav.dart';
 import '../../core/constants/theme_constants.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key, required User user});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

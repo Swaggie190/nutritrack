@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:nutritrack/data/models/user.dart' as nutritrack_user;
 import 'package:nutritrack/core/constants/theme_constants.dart';
 import 'package:nutritrack/core/services/user_service.dart'; // Import UserService
-import 'package:nutritrack/data/models/user.dart';
 import 'package:nutritrack/widgets/custom_bottom_nav.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -46,7 +46,7 @@ class ProfileScreen extends StatelessWidget {
           }
           if (authSnapshot.hasData && authSnapshot.data != null) {
             final userId = authSnapshot.data!.uid;
-            return FutureBuilder<User?>(
+            return FutureBuilder<nutritrack_user.User?>(
               future: Provider.of<UserService>(context, listen: false)
                   .getUser(userId),
               builder: (context, userSnapshot) {
@@ -60,7 +60,7 @@ class ProfileScreen extends StatelessWidget {
                           'User data not found')); // Handle if user data is missing in Firestore
                 } else {
                   final user = userSnapshot.data!;
-                  return _buildProfileContent(
+                  return _buildProfileContent(context,
                       user); // Extract profile content to a separate method
                 }
               },
@@ -76,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileContent(User user) {
+  Widget _buildProfileContent(BuildContext context, nutritrack_user.User user) {
     return Padding(
       padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
       child: Column(

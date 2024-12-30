@@ -1,5 +1,5 @@
-// bmi_calculator_card.dart
 import 'package:flutter/material.dart';
+import 'package:nutritrack/features/meals/meal_recommendations_card.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/theme_constants.dart';
@@ -57,13 +57,12 @@ class BMICalculatorCard extends StatelessWidget {
               child: Text('No user data found'),
             ),
           );
-        } else {
-          final user = snapshot.data!;
-          final double bmi =
-              BMICalculator.calculateBMI(user.weight, user.height);
-          final observation = _getObservation(bmi);
-          final category = AppConstants.bmiCategories[observation]!;
+        }
 
+        final user = snapshot.data!;
+
+        // Check if weight or height is null
+        if (user.weight == null || user.height == null) {
           return Scaffold(
             appBar: AppBar(
               title: const Text('BMI Result'),
@@ -72,58 +71,78 @@ class BMICalculatorCard extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
               ),
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
-              child: Card(
-                elevation: ThemeConstants.defaultElevation,
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(ThemeConstants.defaultBorderRadius),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Your BMI: ${bmi.toStringAsFixed(1)}',
-                        style: ThemeConstants.headingStyle,
-                      ),
-                      const SizedBox(height: ThemeConstants.defaultPadding),
-                      const Text(
-                        'Observation:',
-                        style: ThemeConstants.subheadingStyle,
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            width: 10,
-                            height: 10,
-                            color: category['color'] as Color,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '$observation (${category['range']})',
-                            style: ThemeConstants.bodyStyle,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: ThemeConstants.defaultPadding),
-                      const Text(
-                        'Recommendation:',
-                        style: ThemeConstants.subheadingStyle,
-                      ),
-                      Text(
-                        _getRecommendation(observation),
-                        style: ThemeConstants.bodyStyle,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            body: const Center(
+              child:
+                  Text('Please update your weight and height in your profile'),
             ),
           );
         }
+
+        final double bmi =
+            BMICalculator.calculateBMI(user.weight!, user.height!);
+        final observation = _getObservation(bmi);
+        final category = AppConstants.bmiCategories[observation]!;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('BMI Result'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+            child: Card(
+              elevation: ThemeConstants.defaultElevation,
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(ThemeConstants.defaultBorderRadius),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Your BMI: ${bmi.toStringAsFixed(1)}',
+                      style: ThemeConstants.headingStyle,
+                    ),
+                    const SizedBox(height: ThemeConstants.defaultPadding),
+                    const Text(
+                      'Observation:',
+                      style: ThemeConstants.subheadingStyle,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 10,
+                          height: 10,
+                          color: category['color'] as Color,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '$observation (${category['range']})',
+                          style: ThemeConstants.bodyStyle,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: ThemeConstants.defaultPadding),
+                    const Text(
+                      'Recommendation:',
+                      style: ThemeConstants.subheadingStyle,
+                    ),
+                    Text(
+                      _getRecommendation(observation),
+                      style: ThemeConstants.bodyStyle,
+                    ),
+                    FoodRecommendationCard(bmiCategory: observation),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
       },
     );
   }

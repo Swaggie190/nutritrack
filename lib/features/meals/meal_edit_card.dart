@@ -1,51 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:nutritrack/core/services/auth_service.dart';
-import '../../core/constants/theme_constants.dart';
-import '../../core/services/meal_service.dart';
+import '../../../core/constants/theme_constants.dart';
+import '../../../data/models/meal.dart';
+import '../../../core/services/meal_service.dart';
 import 'package:provider/provider.dart';
 
-class AddMealScreen extends StatefulWidget {
-  const AddMealScreen({super.key});
+class MealEditCard extends StatefulWidget {
+  final Meal meal;
+
+  const MealEditCard({super.key, required this.meal});
 
   @override
-  _AddMealScreenState createState() => _AddMealScreenState();
+  _MealEditCardState createState() => _MealEditCardState();
 }
 
-class _AddMealScreenState extends State<AddMealScreen> {
+class _MealEditCardState extends State<MealEditCard> {
   final _formKey = GlobalKey<FormState>();
   late String _name;
   late int _calories;
   String? _notes;
 
-  Future<void> _addMeal() async {
+  @override
+  void initState() {
+    super.initState();
+    _name = widget.meal.name;
+    _calories = widget.meal.calories;
+    _notes = widget.meal.notes;
+  }
+
+  Future<void> _updateMeal() async {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
 
+      final updatedMeal = Meal(
+        id: widget.meal.id,
+        userId: widget.meal.userId,
+        name: _name,
+        calories: _calories,
+        consumedAt: widget.meal.consumedAt,
+        notes: _notes,
+      );
+
       try {
         final mealService = Provider.of<MealService>(context, listen: false);
-        final authService = Provider.of<AuthService>(context, listen: false);
-        final userId = authService.currentUser?.uid;
-
-        if (userId == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User not logged in')),
-          );
-          return;
-        }
-
-        await mealService.addMeal(
-          userId: userId,
-          name: _name,
-          calories: _calories,
-          notes: _notes,
-        );
+        await mealService.updateMeal(updatedMeal);
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Meal added successfully')),
+          const SnackBar(content: Text('Meal updated successfully')),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add meal: $e')),
+          SnackBar(content: Text('Failed to update meal: $e')),
         );
       }
     }
@@ -55,7 +59,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Meal'),
+        title: const Text('Edit Meal'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
@@ -64,6 +68,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _name,
                 decoration: const InputDecoration(labelText: 'Meal Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -74,6 +79,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                 onSaved: (value) => _name = value!,
               ),
               TextFormField(
+                initialValue: _calories.toString(),
                 decoration: const InputDecoration(labelText: 'Calories'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
@@ -87,6 +93,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                 onSaved: (value) => _calories = int.parse(value!),
               ),
               TextFormField(
+                initialValue: _notes,
                 decoration:
                     const InputDecoration(labelText: 'Notes (optional)'),
                 onSaved: (value) => _notes = value,
@@ -95,8 +102,9 @@ class _AddMealScreenState extends State<AddMealScreen> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: ThemeConstants.primaryColor),
-                onPressed: _addMeal,
-                child: const Text('Add Meal', style: ThemeConstants.bodyStyle),
+                onPressed: _updateMeal,
+                child:
+                    const Text('Save Changes', style: ThemeConstants.bodyStyle),
               ),
             ],
           ),
