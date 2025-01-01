@@ -25,7 +25,6 @@ class _AddMealScreenState extends State<AddMealScreen> {
         final mealService = Provider.of<MealService>(context, listen: false);
         final authService = Provider.of<AuthService>(context, listen: false);
         final userId = authService.currentUser?.uid;
-
         if (userId == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('User not logged in')),

@@ -15,6 +15,7 @@ class Meal {
     this.notes,
   });
 
+  // Convert Meal to Map (for storing in Firestore)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -26,14 +27,39 @@ class Meal {
     };
   }
 
+  // Create a Meal from Map (Firestore-specific mapping)
   factory Meal.fromMap(Map<String, dynamic> map) {
     return Meal(
-      id: map['id'],
-      userId: map['userId'],
-      name: map['name'],
-      calories: map['calories'],
+      id: map['id'] ?? '',
+      userId: map['userId'] ?? '',
+      name: map['name'] ?? '',
+      calories: map['calories'] ?? 0,
       consumedAt: DateTime.parse(map['consumedAt']),
       notes: map['notes'],
     );
+  }
+
+  // Create a Meal from Firestore document (handles Firestore data retrieval)
+  factory Meal.fromFirestore(Map<String, dynamic> firestoreData) {
+    return Meal(
+      id: firestoreData['id'] ?? '',
+      userId: firestoreData['userId'] ?? '',
+      name: firestoreData['name'] ?? '',
+      calories: firestoreData['calories'] ?? 0,
+      consumedAt: DateTime.parse(firestoreData['consumedAt']),
+      notes: firestoreData['notes'],
+    );
+  }
+
+  // Optional: Convert Meal to Firestore format
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'userId': userId,
+      'name': name,
+      'calories': calories,
+      'consumedAt': consumedAt.toIso8601String(),
+      'notes': notes,
+    };
   }
 }

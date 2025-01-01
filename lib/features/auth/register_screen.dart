@@ -23,19 +23,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
     try {
       final userService = Provider.of<UserService>(context, listen: false);
 
-      await userService.registerUser(
-        context,
-        emailController.text.trim(),
-        passwordController.text.trim(),
-        nameController.text.trim(),
-        double.parse(heightController.text.trim()),
-        double.parse(weightController.text.trim()),
-      );
+      // Step 1: Register the user
+      try {
+        await userService.registerUser(
+          context,
+          emailController.text.trim(),
+          passwordController.text.trim(),
+          nameController.text.trim(),
+          double.parse(heightController.text.trim()),
+          double.parse(weightController.text.trim()),
+        );
+        print("User registered successfully");
+      } catch (e) {
+        print("Error during user registration: $e");
+        throw Exception("Error in registerUser: $e");
+      }
 
-      // Registration successful, navigate to home
-      Navigator.pushReplacementNamed(context, '/home');
+      // Step 2: Navigate to home
+      try {
+        Navigator.pushReplacementNamed(context, '/home');
+        print("Navigation to home successful");
+      } catch (e) {
+        print("Error during navigation: $e");
+        throw Exception("Error in navigation: $e");
+      }
     } catch (e) {
-      // Handle errors (display error message)
+      // Handle errors and display error message
+      print("handleRegister encountered an error: $e");
       setState(() {
         errorMessage = e.toString();
       });

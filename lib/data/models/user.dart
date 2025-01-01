@@ -17,6 +17,7 @@ class User {
     this.dailyCalorieGoal,
   });
 
+  // Convert User to a Map (for storing in Firestore)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -29,15 +30,43 @@ class User {
     };
   }
 
+  // Create a User from a Map (for retrieving from Firestore)
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'],
-      name: map['name'],
-      email: map['email'],
-      password: map['password'],
-      height: map['height']?.toDouble(),
-      weight: map['weight']?.toDouble(),
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      email: map['email'] ?? '',
+      password: map['password'] ?? '',
+      height: (map['height'] is num) ? map['height'].toDouble() : null,
+      weight: (map['weight'] is num) ? map['weight'].toDouble() : null,
       dailyCalorieGoal: map['dailyCalorieGoal'],
     );
+  }
+
+  // Create a User from Firestore document (Firestore-specific mapping)
+  factory User.fromFirestore(Map<String, dynamic> firestoreData) {
+    return User(
+      id: firestoreData['id'] ?? '',
+      name: firestoreData['name'] ?? '',
+      email: firestoreData['email'] ?? '',
+      password: firestoreData['password'] ??
+          '', // Password handling should be more secure
+      height: firestoreData['height']?.toDouble(),
+      weight: firestoreData['weight']?.toDouble(),
+      dailyCalorieGoal: firestoreData['dailyCalorieGoal'],
+    );
+  }
+
+  // Optional: You could add a method to convert the User to a Firestore document format
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'password': password,
+      'height': height,
+      'weight': weight,
+      'dailyCalorieGoal': dailyCalorieGoal,
+    };
   }
 }

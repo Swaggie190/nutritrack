@@ -29,6 +29,16 @@ class MealService {
     }
   }
 
+  Future<bool> userHasMeals(String userId) async {
+    try {
+      final meals = await _mealRepository.getUserMeals(userId);
+
+      return meals.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // Get all meals for a user
   Future<List<Meal>> getUserMeals(String userId) async {
     try {

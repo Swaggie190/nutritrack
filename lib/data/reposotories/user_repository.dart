@@ -8,9 +8,16 @@ class UserRepository {
 
   Future<void> createUser(User user) async {
     try {
+      // Save the user document to Firestore
       await _firestore.collection('users').doc(user.id).set(user.toMap());
+      print("User created successfully in Firestore: ${user.id}");
+    } on FirebaseException catch (e) {
+      print("Firestore error during user creation: ${e.message}");
+      print("Full error details: ${e.toString()}"); // Log complete error object
+      throw Exception('Failed to create user in Firestore: ${e.message}');
     } catch (e) {
-      throw Exception('Failed to create user: $e');
+      print("Unexpected error during Firestore user creation: $e");
+      throw Exception("Unexpected error in createUser: $e");
     }
   }
 
@@ -18,18 +25,27 @@ class UserRepository {
     try {
       final doc = await _firestore.collection('users').doc(id).get();
       if (doc.exists) {
-        return User.fromMap(doc.data()!);
+        Map<String, dynamic> data = doc.data()!;
+        data['id'] = doc.id;
+        return User.fromMap(data);
       }
       return null;
     } catch (e) {
+      print('Error getting user: $e');
       throw Exception('Failed to get user: $e');
     }
   }
 
   Future<void> updateUser(User user, Map<String, Object?> updatedUser) async {
     try {
-      await _firestore.collection('users').doc(user.id).update(user.toMap());
+      Map<String, dynamic> updateData = user.toMap();
+      updateData.remove('id');
+
+      updateData.addAll(updatedUser);
+
+      await _firestore.collection('users').doc(user.id).update(updateData);
     } catch (e) {
+      print('Error updating user: $e');
       throw Exception('Failed to update user: $e');
     }
   }

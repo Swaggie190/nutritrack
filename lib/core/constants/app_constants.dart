@@ -34,20 +34,17 @@ class AppConstants {
   static const Map<String, Map<String, dynamic>> bmiCategories = {
     'Underweight': {
       'range': '< 18.5',
-      'color': const Color(0xFF64B5F6)
+      'color': Color(0xFF64B5F6)
     }, // Use const Color
     'Normal': {
       'range': '18.5 - 24.9',
-      'color': const Color(0xFF81C784)
+      'color': Color(0xFF81C784)
     }, // Use const Color
     'Overweight': {
       'range': '25 - 29.9',
-      'color': const Color(0xFFFFB74D)
+      'color': Color(0xFFFFB74D)
     }, // Use const Color
-    'Obese': {
-      'range': '≥ 30',
-      'color': const Color(0xFFE57373)
-    }, // Use const Color
+    'Obese': {'range': '≥ 30', 'color': Color(0xFFE57373)}, // Use const Color
   };
 
   // Error Messages

@@ -16,14 +16,16 @@ class MealRepository {
 
   Future<List<Meal>> getUserMeals(String userId) async {
     try {
+      print(userId);
       final querySnapshot = await _firestore
           .collection('meals')
           .where('userId', isEqualTo: userId)
           .orderBy('consumedAt', descending: true)
           .get();
-
       return querySnapshot.docs.map((doc) => Meal.fromMap(doc.data())).toList();
     } catch (e) {
+      print("sorri");
+      print(e);
       throw Exception('Failed to get user meals: $e');
     }
   }

@@ -12,25 +12,42 @@ class UserService {
   Future<void> registerUser(BuildContext context, String email, String password,
       String name, double height, double weight) async {
     try {
-      final userId = await _authService.signUp(email, password);
-      if (userId != null) {
+      // Step 1: Sign up the user
+      String? userId;
+      try {
+        userId = await _authService.signUp(email, password);
+        if (userId == null) throw Exception("User ID is null after sign up");
+      } catch (e) {
+        print("Error during sign-up: $e");
+        throw Exception("Error in signUp: $e");
+      }
+
+      // Step 2: Create user in Firestore
+      try {
         final newUser = User(
           id: userId,
           name: name,
           email: email,
-          password:
-              password, // IMPORTANT: Handle passwords securely in production. DO NOT store plain text passwords in Firestore.
+          password: password,
           height: height,
           weight: weight,
         );
+        print("creating...");
+        print(newUser.name);
+        print(newUser.height);
         await _userRepository.createUser(newUser);
+        print("finished creating.");
+      } catch (e) {
+        print("Error during Firestore user creation: $e");
+        throw Exception("Error in createUser: $e");
       }
     } catch (e) {
-      // Handle signup errors. Consider showing a SnackBar or dialog.
+      // Log and rethrow the error for the caller
+      print("registerUser encountered an error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text("Error: $e")),
       );
-      rethrow; // Re-throw the exception so the caller can also handle it if needed.
+      rethrow;
     }
   }
 
@@ -60,8 +77,10 @@ class UserService {
 
   Future<User?> getUser(String id) async {
     try {
-      return await _userRepository.getUser(id);
+      final userData = await _userRepository.getUser(id);
+      return userData;
     } catch (e) {
+      print("Error getting user: $e");
       rethrow;
     }
   }

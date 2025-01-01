@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:nutritrack/data/models/user.dart' as nutritrack_user;
 import 'package:nutritrack/core/constants/theme_constants.dart';
-import 'package:nutritrack/core/services/user_service.dart'; // Import UserService
+import 'package:nutritrack/core/services/user_service.dart';
 import 'package:nutritrack/widgets/custom_bottom_nav.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -30,20 +30,21 @@ class ProfileScreen extends StatelessWidget {
                     .signOut(context);
                 Navigator.pushReplacementNamed(context, '/login');
               } catch (e) {
-                // Handle logout error if needed.
-                print('Logout error: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Logout failed: $e')),
+                );
               }
             },
           ),
         ],
       ),
       body: StreamBuilder<firebase_auth.User?>(
-        // Use StreamBuilder to listen for auth changes
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, authSnapshot) {
           if (authSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
           if (authSnapshot.hasData && authSnapshot.data != null) {
             final userId = authSnapshot.data!.uid;
             return FutureBuilder<nutritrack_user.User?>(
@@ -53,22 +54,61 @@ class ProfileScreen extends StatelessWidget {
                 if (userSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (userSnapshot.hasError) {
-                  return Center(child: Text('Error: ${userSnapshot.error}'));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Error loading profile: ${userSnapshot.error}'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ProfileScreen(),
+                            ),
+                          ),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
                 } else if (userSnapshot.data == null) {
-                  return const Center(
-                      child: Text(
-                          'User data not found')); // Handle if user data is missing in Firestore
-                } else {
-                  final user = userSnapshot.data!;
-                  return _buildProfileContent(context,
-                      user); // Extract profile content to a separate method
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('User data not found'),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pushReplacementNamed(
+                            context,
+                            '/login',
+                          ),
+                          child: const Text('Back to Login'),
+                        ),
+                      ],
+                    ),
+                  );
                 }
+
+                return _buildProfileContent(context, userSnapshot.data!);
               },
             );
           } else {
-            return const Center(
-                child:
-                    Text('Not logged in')); // Handle if user is not logged in
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Not logged in'),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pushReplacementNamed(
+                      context,
+                      '/login',
+                    ),
+                    child: const Text('Go to Login'),
+                  ),
+                ],
+              ),
+            );
           }
         },
       ),
@@ -77,35 +117,46 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileContent(BuildContext context, nutritrack_user.User user) {
-    return Padding(
-      padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CircleAvatar(
-            radius: 50,
-            backgroundColor: ThemeConstants.secondaryColor,
-            child: Icon(Icons.person, size: 50, color: Colors.white),
+    return RefreshIndicator(
+      onRefresh: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        );
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CircleAvatar(
+                radius: 50,
+                backgroundColor: ThemeConstants.secondaryColor,
+                child: Icon(Icons.person, size: 50, color: Colors.white),
+              ),
+              const SizedBox(height: ThemeConstants.defaultPadding),
+              Text('Name: ${user.name}', style: ThemeConstants.bodyStyle),
+              Text('Email: ${user.email}', style: ThemeConstants.bodyStyle),
+              Text('Height: ${user.height ?? 'N/A'} cm',
+                  style: ThemeConstants.bodyStyle),
+              Text('Weight: ${user.weight ?? 'N/A'} kg',
+                  style: ThemeConstants.bodyStyle),
+              Text('Daily Calorie Goal: ${user.dailyCalorieGoal ?? 'N/A'} kcal',
+                  style: ThemeConstants.bodyStyle),
+              const SizedBox(height: ThemeConstants.largePadding),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: ThemeConstants.primaryColor),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/bmi_calculator');
+                },
+                child: const Text('View BMI', style: ThemeConstants.bodyStyle),
+              ),
+            ],
           ),
-          const SizedBox(height: ThemeConstants.defaultPadding),
-          Text('Name: ${user.name}', style: ThemeConstants.bodyStyle),
-          Text('Email: ${user.email}', style: ThemeConstants.bodyStyle),
-          Text('Height: ${user.height ?? 'N/A'} cm',
-              style: ThemeConstants.bodyStyle), // Handle null values
-          Text('Weight: ${user.weight ?? 'N/A'} kg',
-              style: ThemeConstants.bodyStyle), // Handle null values
-          Text('Daily Calorie Goal: ${user.dailyCalorieGoal ?? 'N/A'} kcal',
-              style: ThemeConstants.bodyStyle), // Handle null values
-          const SizedBox(height: ThemeConstants.largePadding),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: ThemeConstants.primaryColor),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/bmi_calculator');
-            },
-            child: const Text('View BMI', style: ThemeConstants.bodyStyle),
-          ),
-        ],
+        ),
       ),
     );
   }

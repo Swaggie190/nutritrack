@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nutritrack/core/services/meal_service.dart';
 import 'package:nutritrack/data/models/meal.dart';
+import 'package:nutritrack/data/models/user.dart' as userData;
 import 'package:nutritrack/data/reposotories/meal_repository.dart';
 import 'package:nutritrack/features/Home/home.dart';
 import 'package:nutritrack/core/services/auth_service.dart';
@@ -19,6 +20,7 @@ import 'package:nutritrack/features/profile/profile_screen.dart';
 import 'package:nutritrack/features/meals/meal_screen.dart';
 import 'package:nutritrack/features/meals/add_meal_screen.dart';
 import 'package:nutritrack/features/meals/meal_edit_card.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 import 'core/constants/app_constants.dart';
 import 'core/constants/theme_constants.dart';
@@ -39,29 +41,42 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        // First, provide the Firebase instances
+        Provider<FirebaseFirestore>.value(value: firestore),
+        Provider<FirebaseAuth>.value(value: auth),
+
+        // Then provide the repositories
+        Provider<UserRepository>(
+          create: (context) => UserRepository(
+            context.read<FirebaseFirestore>(),
+          ),
+        ),
+        Provider<MealRepository>(
+          create: (context) => MealRepository(
+            context.read<FirebaseFirestore>(),
+          ),
+        ),
+
+        // Then provide the services that depend on repositories
         Provider<StorageService>(
           create: (_) => StorageService(prefs),
         ),
         Provider<AuthService>(
-          create: (_) => AuthService(auth),
-        ),
-        Provider<UserRepository>(
-          create: (_) => UserRepository(firestore),
+          create: (context) => AuthService(
+            context.read<FirebaseAuth>(),
+          ),
         ),
         Provider<MealService>(
           create: (context) => MealService(
-            MealRepository(
-              context.read<FirebaseFirestore>(),
-            ),
+            context.read<MealRepository>(),
           ),
         ),
         Provider<UserService>(
           create: (context) => UserService(
-            Provider.of<AuthService>(context, listen: false),
-            Provider.of<UserRepository>(context, listen: false),
+            context.read<AuthService>(),
+            context.read<UserRepository>(),
           ),
         ),
-        Provider<FirebaseFirestore>.value(value: firestore),
       ],
       child: const NutriTrackApp(),
     ),
@@ -80,7 +95,6 @@ class NutriTrackApp extends StatelessWidget {
       routes: {
         '/': (context) => _handleAuthState(context),
         '/login': (context) => const LoginScreen(),
-        '/home': (context) => _handleAuthState(context),
         '/profile': (context) => const ProfileScreen(),
         '/meals': (context) => const MealScreen(),
         '/add_meal': (context) => const AddMealScreen(),
@@ -92,12 +106,10 @@ class NutriTrackApp extends StatelessWidget {
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/home') {
-          final args = settings.arguments;
-          if (args is User) {
-            return MaterialPageRoute(
-              builder: (context) => HomeScreen(user: args),
-            );
-          }
+          // Removed user parameter
+          return MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          );
         }
         return null;
       },
@@ -106,7 +118,7 @@ class NutriTrackApp extends StatelessWidget {
   }
 
   Widget _handleAuthState(BuildContext context) {
-    return StreamBuilder<User?>(
+    return StreamBuilder<firebase_auth.User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, authSnapshot) {
         if (authSnapshot.connectionState == ConnectionState.waiting) {
@@ -118,17 +130,17 @@ class NutriTrackApp extends StatelessWidget {
           return const LoginScreen();
         }
 
-        // Create a nullable Future<User?> variable
-        Future<User?>? userFuture;
+        // Fetch your custom User data using the UserService
+        Future<userData.User?> userFuture;
         try {
           userFuture = Provider.of<UserService>(context, listen: false)
-              .getUser(firebaseUser.uid) as Future<User?>?;
+              .getUser(firebaseUser.uid); // This will return your custom User
         } catch (e) {
           print('Error setting up user future: $e');
-          userFuture = null;
+          userFuture = Future.value(null); // Return a Future with null if error
         }
 
-        return FutureBuilder<User?>(
+        return FutureBuilder<userData.User?>(
           future: userFuture,
           builder: (context, userSnapshot) {
             if (userSnapshot.connectionState == ConnectionState.waiting) {
@@ -136,7 +148,7 @@ class NutriTrackApp extends StatelessWidget {
             }
 
             if (userSnapshot.hasData && userSnapshot.data != null) {
-              return HomeScreen(user: userSnapshot.data!);
+              return const HomeScreen(); // Your custom user data will be fetched here
             } else {
               return const LoginScreen();
             }
