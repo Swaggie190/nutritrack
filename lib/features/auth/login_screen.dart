@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             TextField(
               controller: emailController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Email',
                 labelStyle: ThemeConstants.bodyStyle,
               ),
@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             TextField(
               controller: passwordController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Password',
                 labelStyle: ThemeConstants.bodyStyle,
               ),
@@ -65,16 +65,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: ThemeConstants.defaultPadding),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: ThemeConstants.primaryColor),
-              onPressed: () => handleLogin(context), // Pass context
-              child: const Text('Login', style: ThemeConstants.bodyStyle),
-            ),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: ThemeConstants.primaryColor),
+                onPressed: () => handleLogin(context), // Pass context
+                child: Text('Login', style: ThemeConstants.bodyStyle)),
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/register');
               },
-              child: const Text('Don\'t have an account? Register',
+              child: Text('Don\'t have an account? Register',
                   style: ThemeConstants.subheadingStyle),
             ),
           ],

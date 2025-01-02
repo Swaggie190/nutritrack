@@ -148,11 +148,10 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
               ),
               const SizedBox(height: ThemeConstants.defaultPadding),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeConstants.primaryColor),
-                onPressed: _updateUser,
-                child: const Text('Save', style: ThemeConstants.bodyStyle),
-              ),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeConstants.primaryColor),
+                  onPressed: _updateUser,
+                  child: Text('Save', style: ThemeConstants.bodyStyle)),
             ],
           ),
         ),

@@ -92,11 +92,10 @@ class _AddMealScreenState extends State<AddMealScreen> {
               ),
               const SizedBox(height: ThemeConstants.defaultPadding),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeConstants.primaryColor),
-                onPressed: _addMeal,
-                child: const Text('Add Meal', style: ThemeConstants.bodyStyle),
-              ),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeConstants.primaryColor),
+                  onPressed: _addMeal,
+                  child: Text('Add Meal', style: ThemeConstants.bodyStyle)),
             ],
           ),
         ),

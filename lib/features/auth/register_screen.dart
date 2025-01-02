@@ -75,14 +75,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Name',
                   labelStyle: ThemeConstants.bodyStyle,
                 ),
               ),
               TextField(
                 controller: emailController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Email',
                   labelStyle: ThemeConstants.bodyStyle,
                 ),
@@ -90,7 +90,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               TextField(
                 controller: passwordController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Password',
                   labelStyle: ThemeConstants.bodyStyle,
                 ),
@@ -98,7 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               TextField(
                 controller: heightController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Height',
                   labelStyle: ThemeConstants.bodyStyle,
                 ),
@@ -106,7 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               TextField(
                 controller: weightController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Weight',
                   labelStyle: ThemeConstants.bodyStyle,
                 ),
@@ -114,11 +114,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: ThemeConstants.defaultPadding),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeConstants.primaryColor),
-                onPressed: () => handleRegister(context), // Pass context
-                child: const Text('Register', style: ThemeConstants.bodyStyle),
-              ),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeConstants.primaryColor),
+                  onPressed: () => handleRegister(context), // Pass context
+                  child: Text('Register', style: ThemeConstants.bodyStyle)),
             ],
           ),
         ),

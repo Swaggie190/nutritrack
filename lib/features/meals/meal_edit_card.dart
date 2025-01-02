@@ -100,12 +100,10 @@ class _MealEditCardState extends State<MealEditCard> {
               ),
               const SizedBox(height: ThemeConstants.defaultPadding),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeConstants.primaryColor),
-                onPressed: _updateMeal,
-                child:
-                    const Text('Save Changes', style: ThemeConstants.bodyStyle),
-              ),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeConstants.primaryColor),
+                  onPressed: _updateMeal,
+                  child: Text('Save Changes', style: ThemeConstants.bodyStyle)),
             ],
           ),
         ),

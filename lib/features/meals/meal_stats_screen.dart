@@ -14,7 +14,9 @@ class MealStatisticsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meal Statistics'),
+        title: Text('Meal Statistics', style: ThemeConstants.headingStyle),
+        centerTitle: true,
+        elevation: ThemeConstants.largeElevation,
       ),
       body: StreamBuilder<String?>(
         stream: authService.authStateChanges,
@@ -39,38 +41,165 @@ class MealStatisticsScreen extends StatelessWidget {
 
   Widget _buildStatisticsBody(
       BuildContext context, MealService mealService, String userId) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            ThemeConstants.primaryColor.withOpacity(0.1),
+            Colors.white,
+          ],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FutureBuilder<Map<String, dynamic>>(
+                future: mealService.getMealStatistics(userId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Statistics Error: ${snapshot.error}',
+                          style: const TextStyle(
+                              color: ThemeConstants.errorColor)),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data == null) {
+                    return const Center(
+                        child: Text('No meal statistics found'));
+                  } else {
+                    final statistics = snapshot.data!;
+                    return _buildStatisticsContent(statistics);
+                  }
+                },
+              ),
+              const SizedBox(height: ThemeConstants.largePadding),
+              _buildCaloriesCard(mealService, userId),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatisticsContent(Map<String, dynamic> statistics) {
+    return Card(
+      elevation: ThemeConstants.largeElevation,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ThemeConstants.largeBorderRadius),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Your Meal Statistics',
+              style: ThemeConstants.headingStyle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: ThemeConstants.largePadding),
+            _buildStatCard(
+              'Total Meals',
+              '${statistics['totalMeals'] ?? 0}',
+              Icons.restaurant,
+              ThemeConstants.primaryColor,
+            ),
+            _buildStatCard(
+              'Today\'s Meals',
+              '${statistics['todayMeals'] ?? 0}',
+              Icons.today,
+              ThemeConstants.secondaryColor,
+            ),
+            _buildStatCard(
+              'Today\'s Calories',
+              '${statistics['todayCalories'] ?? 0} kcal',
+              Icons.local_fire_department,
+              ThemeConstants.warningColor,
+            ),
+            _buildStatCard(
+              'Average Calories/Meal',
+              '${statistics['averageCaloriesPerMeal'] != null ? (statistics['averageCaloriesPerMeal'] as num).toStringAsFixed(1) : 0} kcal',
+              Icons.analytics,
+              ThemeConstants.successColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(
+      String label, String value, IconData icon, Color color) {
     return Padding(
-      padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
-      child: SingleChildScrollView(
+      padding:
+          const EdgeInsets.symmetric(vertical: ThemeConstants.smallPadding),
+      child: Container(
+        padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius:
+              BorderRadius.circular(ThemeConstants.defaultBorderRadius),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(width: ThemeConstants.defaultPadding),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: ThemeConstants.bodyStyle.copyWith(
+                      color: Colors.black54,
+                    ),
+                  ),
+                  Text(
+                    value,
+                    style: ThemeConstants.subheadingStyle.copyWith(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCaloriesCard(MealService mealService, String userId) {
+    return Card(
+      elevation: ThemeConstants.largeElevation,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ThemeConstants.largeBorderRadius),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FutureBuilder<Map<String, dynamic>>(
-              future: mealService.getMealStatistics(userId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Statistics Error: ${snapshot.error}',
-                        style:
-                            const TextStyle(color: ThemeConstants.errorColor)),
-                  );
-                } else if (!snapshot.hasData || snapshot.data == null) {
-                  return const Center(child: Text('No meal statistics found'));
-                } else {
-                  final statistics = snapshot.data!;
-                  return _buildStatisticsContent(statistics);
-                }
-              },
+            Row(
+              children: [
+                const Icon(Icons.calendar_today,
+                    color: ThemeConstants.secondaryColor),
+                const SizedBox(width: ThemeConstants.smallPadding),
+                Text(
+                  'Weekly Calorie History',
+                  style: ThemeConstants.subheadingStyle,
+                ),
+              ],
             ),
-            const SizedBox(height: ThemeConstants.largePadding),
-            const Divider(),
-            const Text(
-              'Calories by Date:',
-              style: ThemeConstants.subheadingStyle,
-            ),
-            const SizedBox(height: ThemeConstants.smallPadding),
+            const SizedBox(height: ThemeConstants.defaultPadding),
             FutureBuilder<Map<DateTime, int>>(
               future: mealService.getCaloriesForDateRange(
                 userId,
@@ -91,54 +220,46 @@ class MealStatisticsScreen extends StatelessWidget {
                   final caloriesByDate = snapshot.data!;
                   return Column(
                     children: caloriesByDate.entries.map((entry) {
-                      return Text(
-                        '${entry.key.toLocal().toString().split(' ')[0]}: ${entry.value} kcal',
-                        style: ThemeConstants.bodyStyle,
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: ThemeConstants.smallPadding),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              entry.key.toLocal().toString().split(' ')[0],
+                              style: ThemeConstants.bodyStyle,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: ThemeConstants.defaultPadding,
+                                vertical: ThemeConstants.smallPadding,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ThemeConstants.primaryColor
+                                    .withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(
+                                    ThemeConstants.defaultBorderRadius),
+                              ),
+                              child: Text(
+                                '${entry.value} kcal',
+                                style: ThemeConstants.bodyStyle.copyWith(
+                                  color: ThemeConstants.primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     }).toList(),
                   );
                 }
               },
             ),
-            const SizedBox(height: ThemeConstants.defaultPadding),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: ThemeConstants.primaryColor),
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Back', style: ThemeConstants.bodyStyle),
-            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildStatisticsContent(Map<String, dynamic> statistics) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Your Meal Statistics',
-          style: ThemeConstants.headingStyle,
-        ),
-        const SizedBox(height: ThemeConstants.defaultPadding),
-        Text(
-          'Total Meals: ${statistics['totalMeals'] ?? 0}', // Handle potential nulls
-          style: ThemeConstants.bodyStyle,
-        ),
-        Text(
-          'Today\'s Meals: ${statistics['todayMeals'] ?? 0}',
-          style: ThemeConstants.bodyStyle,
-        ),
-        Text(
-          'Today\'s Calories: ${statistics['todayCalories'] ?? 0}',
-          style: ThemeConstants.bodyStyle,
-        ),
-        Text(
-          'Average Calories Per Meal: ${statistics['averageCaloriesPerMeal'] != null ? (statistics['averageCaloriesPerMeal'] as num).toStringAsFixed(1) : 0}', // Handle nulls and cast
-          style: ThemeConstants.bodyStyle,
-        ),
-      ],
     );
   }
 }

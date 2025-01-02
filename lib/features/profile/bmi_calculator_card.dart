@@ -109,7 +109,7 @@ class BMICalculatorCard extends StatelessWidget {
                       style: ThemeConstants.headingStyle,
                     ),
                     const SizedBox(height: ThemeConstants.defaultPadding),
-                    const Text(
+                    Text(
                       'Observation:',
                       style: ThemeConstants.subheadingStyle,
                     ),
@@ -128,7 +128,7 @@ class BMICalculatorCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: ThemeConstants.defaultPadding),
-                    const Text(
+                    Text(
                       'Recommendation:',
                       style: ThemeConstants.subheadingStyle,
                     ),

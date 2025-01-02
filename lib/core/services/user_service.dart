@@ -85,6 +85,10 @@ class UserService {
     }
   }
 
+  Stream<User?> getUserStream(String userId) {
+    return _userRepository.getUserStream(userId);
+  }
+
   Future<void> signOut(BuildContext context) async {
     try {
       await _authService.signOut();

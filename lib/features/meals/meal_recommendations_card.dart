@@ -35,7 +35,7 @@ class FoodRecommendationCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Meal Recommendations',
               style: ThemeConstants.headingStyle,
             ),

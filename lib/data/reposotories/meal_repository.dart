@@ -16,7 +16,6 @@ class MealRepository {
 
   Future<List<Meal>> getUserMeals(String userId) async {
     try {
-      print(userId);
       final querySnapshot = await _firestore
           .collection('meals')
           .where('userId', isEqualTo: userId)
@@ -24,7 +23,22 @@ class MealRepository {
           .get();
       return querySnapshot.docs.map((doc) => Meal.fromMap(doc.data())).toList();
     } catch (e) {
-      print("sorri");
+      print(e);
+      throw Exception('Failed to get user meals: $e');
+    }
+  }
+
+  Stream<List<Meal>> getUserMealsStream(String userId) {
+    try {
+      return _firestore
+          .collection('meals')
+          .where('userId', isEqualTo: userId)
+          .orderBy('consumedAt', descending: true)
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => Meal.fromMap({...doc.data(), 'id': doc.id}))
+              .toList());
+    } catch (e) {
       print(e);
       throw Exception('Failed to get user meals: $e');
     }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nutritrack/data/models/meal.dart';
+import 'package:nutritrack/widgets/custom_bottom_nav.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/services/meal_service.dart';
@@ -15,7 +17,9 @@ class MealScreen extends StatelessWidget {
       builder: (context, authSnapshot) {
         if (authSnapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
 
@@ -23,117 +27,118 @@ class MealScreen extends StatelessWidget {
           final userId = authSnapshot.data!.uid;
           final mealService = Provider.of<MealService>(context, listen: false);
 
-          return FutureBuilder<bool>(
-            // First check if user has any meals
-            future: mealService.userHasMeals(userId),
-            builder: (context, hasMealsSnapshot) {
-              if (hasMealsSnapshot.connectionState == ConnectionState.waiting) {
+          return StreamBuilder<List<Meal>>(
+            stream: mealService.getUserMealsStream(userId),
+            builder: (context, mealsSnapshot) {
+              if (mealsSnapshot.connectionState == ConnectionState.waiting) {
                 return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
               }
 
-              // If user has no meals, redirect to add meal screen
-              if (!hasMealsSnapshot.data!) {
+              if (!mealsSnapshot.hasData || mealsSnapshot.data!.isEmpty) {
                 Future.microtask(
-                  () => Navigator.pushReplacementNamed(context, '/add_meal'),
-                );
+                    () => Navigator.pushReplacementNamed(context, '/add_meal'));
                 return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
               }
 
-              // If user has meals, proceed with loading them
-              return FutureBuilder(
-                future: mealService.getUserMeals(userId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Scaffold(
-                      appBar: AppBar(
-                        title: const Text('Meals'),
-                      ),
-                      body: const Center(child: CircularProgressIndicator()),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Scaffold(
-                      appBar: AppBar(
-                        title: const Text('Meals'),
-                      ),
-                      body: Center(
-                        child: Text('Error: ${snapshot.error}',
-                            style: const TextStyle(
-                                color: ThemeConstants.errorColor)),
-                      ),
-                    );
-                  } else {
-                    final meals = snapshot.data as List;
+              final meals = mealsSnapshot.data!;
 
-                    return Scaffold(
-                      appBar: AppBar(
-                        title: const Text('Meals'),
-                        actions: [
-                          IconButton(
-                            icon: const Icon(Icons.bar_chart),
-                            onPressed: () => Navigator.pushNamed(
-                                context, '/meal_statistics'),
-                          ),
-                        ],
-                      ),
-                      body: ListView.builder(
-                        itemCount: meals.length,
-                        itemBuilder: (context, index) {
-                          final meal = meals[index];
-                          return MealCard(
-                            meal: meal,
-                            onDelete: () async {
-                              await mealService.deleteMeal(meal.id);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Meal deleted successfully')),
-                              );
-                            },
-                            onEdit: () => Navigator.pushNamed(
-                              context,
-                              '/edit_meal',
-                              arguments: meal,
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text('Meals', style: ThemeConstants.headingStyle),
+                  backgroundColor: ThemeConstants.primaryColor,
+                  elevation: ThemeConstants.defaultElevation,
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.bar_chart),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/meal_statistics'),
+                    ),
+                  ],
+                ),
+                body: Padding(
+                  padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+                  child: ListView.builder(
+                    itemCount: meals.length,
+                    itemBuilder: (context, index) {
+                      final meal = meals[index];
+                      return MealCard(
+                        meal: meal,
+                        onDelete: () async {
+                          await mealService.deleteMeal(meal.id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Meal deleted successfully',
+                                style: ThemeConstants.bodyStyle,
+                              ),
+                              backgroundColor: ThemeConstants.successColor,
                             ),
                           );
                         },
-                      ),
-                      floatingActionButton: FloatingActionButton(
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '/add_meal'),
-                        tooltip: 'Add Meal',
-                        child: const Icon(Icons.add),
-                      ),
-                    );
-                  }
-                },
+                        onEdit: () => Navigator.pushNamed(
+                          context,
+                          '/edit_meal',
+                          arguments: meal,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () => Navigator.pushNamed(context, '/add_meal'),
+                  backgroundColor: ThemeConstants.primaryColor,
+                  elevation: ThemeConstants.defaultElevation,
+                  child: const Icon(Icons.add),
+                ),
+                bottomNavigationBar: const CustomBottomNavBar(currentIndex: 2),
               );
             },
           );
-        } else {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Meals'),
-            ),
-            body: Center(
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Meals', style: ThemeConstants.headingStyle),
+            backgroundColor: ThemeConstants.primaryColor,
+            elevation: ThemeConstants.defaultElevation,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Not logged in'),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pushReplacementNamed(
-                      context,
-                      '/login',
+                  Text(
+                    'Not logged in,\nYou need to be logged in to see your meals.',
+                    style: ThemeConstants.bodyStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(ThemeConstants.smallPadding),
+                    child: ElevatedButton(
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, '/login'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeConstants.primaryColor,
+                        elevation: ThemeConstants.defaultElevation,
+                      ),
+                      child:
+                          Text('Go to Login', style: ThemeConstants.bodyStyle),
                     ),
-                    child: const Text('Go to Login'),
                   ),
                 ],
               ),
             ),
-          );
-        }
+          ),
+        );
       },
     );
   }

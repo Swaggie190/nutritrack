@@ -36,6 +36,17 @@ class UserRepository {
     }
   }
 
+  Stream<User?> getUserStream(String id) {
+    return _firestore.collection('users').doc(id).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data()!;
+        data['id'] = snapshot.id;
+        return User.fromMap(data);
+      }
+      return null;
+    });
+  }
+
   Future<void> updateUser(User user, Map<String, Object?> updatedUser) async {
     try {
       Map<String, dynamic> updateData = user.toMap();

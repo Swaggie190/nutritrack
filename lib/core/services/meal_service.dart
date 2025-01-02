@@ -48,6 +48,13 @@ class MealService {
     }
   }
 
+  Stream<List<Meal>> getUserMealsStream(String userId) {
+    return _mealRepository.getUserMealsStream(userId).handleError((error) {
+      print(error);
+      throw Exception('Failed to get user meals: $error');
+    });
+  }
+
   // Update existing meal
   Future<void> updateMeal(Meal meal) async {
     try {
