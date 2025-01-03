@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nutritrack/core/services/meal_service.dart';
 import 'package:nutritrack/data/models/meal.dart';
 import 'package:nutritrack/data/models/user.dart' as userData;
@@ -9,8 +10,10 @@ import 'package:nutritrack/data/reposotories/meal_repository.dart';
 import 'package:nutritrack/features/Home/home.dart';
 import 'package:nutritrack/core/services/auth_service.dart';
 import 'package:nutritrack/features/auth/register_screen.dart';
+import 'package:nutritrack/features/chat/chatbot_screen.dart';
 import 'package:nutritrack/features/meals/meal_stats_screen.dart';
 import 'package:nutritrack/features/profile/bmi_calculator_card.dart';
+import 'package:nutritrack/features/profile/update_profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nutritrack/core/services/user_service.dart';
@@ -30,6 +33,11 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    print("Error loading .env file: $e");
+  }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -41,11 +49,11 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // First, provide the Firebase instances
+        // Firebase instances
         Provider<FirebaseFirestore>.value(value: firestore),
         Provider<FirebaseAuth>.value(value: auth),
 
-        // Then provide the repositories
+        //repositories
         Provider<UserRepository>(
           create: (context) => UserRepository(
             context.read<FirebaseFirestore>(),
@@ -57,7 +65,7 @@ void main() async {
           ),
         ),
 
-        // Then provide the services that depend on repositories
+        // Then services
         Provider<StorageService>(
           create: (_) => StorageService(prefs),
         ),
@@ -96,6 +104,7 @@ class NutriTrackApp extends StatelessWidget {
         '/': (context) => _handleAuthState(context),
         '/login': (context) => const LoginScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/update_user': (context) => const UpdateUserScreen(),
         '/meals': (context) => const MealScreen(),
         '/add_meal': (context) => const AddMealScreen(),
         '/meal_statistics': (context) => const MealStatisticsScreen(),
@@ -103,10 +112,10 @@ class NutriTrackApp extends StatelessWidget {
             meal: ModalRoute.of(context)!.settings.arguments as Meal),
         '/bmi_calculator': (context) => const BMICalculatorCard(),
         '/register': (context) => const RegisterScreen(),
+        '/chat': (context) => const ChatBotScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/home') {
-          // Removed user parameter
           return MaterialPageRoute(
             builder: (context) => const HomeScreen(),
           );
@@ -130,14 +139,14 @@ class NutriTrackApp extends StatelessWidget {
           return const LoginScreen();
         }
 
-        // Fetch your custom User data using the UserService
+        // Fetching User data...
         Future<userData.User?> userFuture;
         try {
           userFuture = Provider.of<UserService>(context, listen: false)
-              .getUser(firebaseUser.uid); // This will return your custom User
+              .getUser(firebaseUser.uid);
         } catch (e) {
           print('Error setting up user future: $e');
-          userFuture = Future.value(null); // Return a Future with null if error
+          userFuture = Future.value(null);
         }
 
         return FutureBuilder<userData.User?>(
@@ -148,7 +157,7 @@ class NutriTrackApp extends StatelessWidget {
             }
 
             if (userSnapshot.hasData && userSnapshot.data != null) {
-              return const HomeScreen(); // Your custom user data will be fetched here
+              return const HomeScreen();
             } else {
               return const LoginScreen();
             }

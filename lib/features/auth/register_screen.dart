@@ -15,23 +15,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController heightController = TextEditingController();
-  final TextEditingController weightController = TextEditingController();
+  double height = 170.0; // Default height in cm
+  double weight = 70.0; // Default weight in kg
   String? errorMessage;
 
   void handleRegister(BuildContext context) async {
     try {
       final userService = Provider.of<UserService>(context, listen: false);
 
-      // Step 1: Register the user
       try {
         await userService.registerUser(
           context,
           emailController.text.trim(),
           passwordController.text.trim(),
           nameController.text.trim(),
-          double.parse(heightController.text.trim()),
-          double.parse(weightController.text.trim()),
+          height,
+          weight,
         );
         print("User registered successfully");
       } catch (e) {
@@ -39,7 +38,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         throw Exception("Error in registerUser: $e");
       }
 
-      // Step 2: Navigate to home
       try {
         Navigator.pushReplacementNamed(context, '/home');
         print("Navigation to home successful");
@@ -48,12 +46,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
         throw Exception("Error in navigation: $e");
       }
     } catch (e) {
-      // Handle errors and display error message
       print("handleRegister encountered an error: $e");
       setState(() {
         errorMessage = e.toString();
       });
     }
+  }
+
+  Widget _buildMeasurementSlider({
+    required String label,
+    required double value,
+    required void Function(double) onChanged,
+    required double min,
+    required double max,
+    required String unit,
+    int? divisions,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: ThemeConstants.bodyStyle),
+            Text(
+              '${value.toStringAsFixed(1)} $unit',
+              style: ThemeConstants.statNumberStyle,
+            ),
+          ],
+        ),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: ThemeConstants.primaryColor,
+            inactiveTrackColor: ThemeConstants.primaryColor.withOpacity(0.2),
+            thumbColor: ThemeConstants.primaryColor,
+            overlayColor: ThemeConstants.primaryColor.withOpacity(0.1),
+            valueIndicatorColor: ThemeConstants.primaryColor,
+            valueIndicatorTextStyle: ThemeConstants.bodyStyle.copyWith(
+              color: Colors.white,
+            ),
+          ),
+          child: Slider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: divisions,
+            label: '${value.toStringAsFixed(1)} $unit',
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -62,63 +105,124 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         title: const Text(AppConstants.appName),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+      body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (errorMessage != null)
-                Text(
-                  errorMessage!,
-                  style: const TextStyle(color: ThemeConstants.errorColor),
-                ),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  labelStyle: ThemeConstants.bodyStyle,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.all(ThemeConstants.largePadding),
+            child: Card(
+              elevation: ThemeConstants.largeElevation,
+              child: Padding(
+                padding: const EdgeInsets.all(ThemeConstants.largePadding),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Create Account',
+                      style: ThemeConstants.headingStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: ThemeConstants.largePadding),
+                    if (errorMessage != null)
+                      Container(
+                        padding:
+                            const EdgeInsets.all(ThemeConstants.smallPadding),
+                        decoration: BoxDecoration(
+                          color: ThemeConstants.errorColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(
+                              ThemeConstants.defaultBorderRadius),
+                        ),
+                        child: Text(
+                          errorMessage!,
+                          style: ThemeConstants.bodyStyle.copyWith(
+                            color: ThemeConstants.errorColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    const SizedBox(height: ThemeConstants.defaultPadding),
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        labelStyle: ThemeConstants.bodyStyle,
+                        prefixIcon: const Icon(Icons.person_outline),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                              ThemeConstants.defaultBorderRadius),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: ThemeConstants.defaultPadding),
+                    TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        labelStyle: ThemeConstants.bodyStyle,
+                        prefixIcon: const Icon(Icons.email_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                              ThemeConstants.defaultBorderRadius),
+                        ),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: ThemeConstants.defaultPadding),
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        labelStyle: ThemeConstants.bodyStyle,
+                        prefixIcon: const Icon(Icons.lock_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                              ThemeConstants.defaultBorderRadius),
+                        ),
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: ThemeConstants.largePadding),
+                    _buildMeasurementSlider(
+                      label: 'Height',
+                      value: height,
+                      onChanged: (value) => setState(() => height = value),
+                      min: 120,
+                      max: 220,
+                      unit: 'cm',
+                      divisions: 100,
+                    ),
+                    const SizedBox(height: ThemeConstants.defaultPadding),
+                    _buildMeasurementSlider(
+                      label: 'Weight',
+                      value: weight,
+                      onChanged: (value) => setState(() => weight = value),
+                      min: 30,
+                      max: 150,
+                      unit: 'kg',
+                      divisions: 120,
+                    ),
+                    const SizedBox(height: ThemeConstants.largePadding),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeConstants.primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: ThemeConstants.defaultPadding,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              ThemeConstants.defaultBorderRadius),
+                        ),
+                      ),
+                      onPressed: () => handleRegister(context),
+                      child: Text('Register',
+                          style: ThemeConstants.bodyStyle
+                              .copyWith(color: Colors.white)),
+                    ),
+                  ],
                 ),
               ),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: ThemeConstants.bodyStyle,
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              TextField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  labelStyle: ThemeConstants.bodyStyle,
-                ),
-                obscureText: true,
-              ),
-              TextField(
-                controller: heightController,
-                decoration: InputDecoration(
-                  labelText: 'Height',
-                  labelStyle: ThemeConstants.bodyStyle,
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: weightController,
-                decoration: InputDecoration(
-                  labelText: 'Weight',
-                  labelStyle: ThemeConstants.bodyStyle,
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: ThemeConstants.defaultPadding),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: ThemeConstants.primaryColor),
-                  onPressed: () => handleRegister(context), // Pass context
-                  child: Text('Register', style: ThemeConstants.bodyStyle)),
-            ],
+            ),
           ),
         ),
       ),
@@ -130,8 +234,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     emailController.dispose();
     passwordController.dispose();
     nameController.dispose();
-    heightController.dispose();
-    weightController.dispose();
     super.dispose();
   }
 }
