@@ -5,14 +5,6 @@ class AppConstants {
   static const String appName = 'NutriTrack';
   static const String appVersion = '1.0.0';
 
-  // API Keys (CRITICAL: NEVER store API keys directly in code)
-  // These should be fetched from a secure source at runtime or injected
-  // via build configurations.
-  // Example (using environment variables):
-  // static String googleMapsApiKey = const String.fromEnvironment('GOOGLE_MAPS_API_KEY');
-  static const String googleMapsApiKeyPlaceholder =
-      'YOUR_GOOGLE_MAPS_API_KEY'; // Placeholder for development
-
   // Storage Keys
   static const String userTokenKey = 'user_token';
   static const String userIdKey = 'user_id';

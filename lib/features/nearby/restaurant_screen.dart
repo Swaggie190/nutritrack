@@ -42,10 +42,12 @@ class _NearbyRestaurantsPageState extends State<NearbyRestaurantsPage> {
     }
   }
 
+  //getting current location with Geolocator
   Future<void> _getCurrentLocation() async {
     if (_isDisposed) return;
 
     try {
+      //Handling permissions to access user location
       final permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         final permissionRequest = await Geolocator.requestPermission();
@@ -75,6 +77,7 @@ class _NearbyRestaurantsPageState extends State<NearbyRestaurantsPage> {
     }
   }
 
+  //Fetch restaurants based on user location
   Future<void> _fetchNearbyRestaurants() async {
     if (_userLocation == null || _isDisposed) return;
 
@@ -158,6 +161,7 @@ class _NearbyRestaurantsPageState extends State<NearbyRestaurantsPage> {
       children: [
         Expanded(
           flex: 3,
+          //Using FluuterMap to draw the map on the UI and handle markers
           child: FlutterMap(
             mapController: _mapController,
             options: MapOptions(
@@ -258,6 +262,7 @@ class _NearbyRestaurantsPageState extends State<NearbyRestaurantsPage> {
     );
   }
 
+  // Details shown when a user clicks on a found location
   void _showRestaurantDetails(Restaurant restaurant) {
     if (_isDisposed) return;
 

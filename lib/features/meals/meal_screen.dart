@@ -28,6 +28,8 @@ class MealScreen extends StatelessWidget {
           final mealService = Provider.of<MealService>(context, listen: false);
 
           return StreamBuilder<List<Meal>>(
+            //This is to make sure the screen is updated automatically each time
+            //there is a change
             stream: mealService.getUserMealsStream(userId),
             builder: (context, mealsSnapshot) {
               if (mealsSnapshot.connectionState == ConnectionState.waiting) {
@@ -59,18 +61,25 @@ class MealScreen extends StatelessWidget {
                   elevation: ThemeConstants.defaultElevation,
                   actions: [
                     IconButton(
-                      icon: const Icon(Icons.bar_chart),
+                      icon: const Icon(
+                        Icons.bar_chart,
+                        color: Colors.white,
+                      ),
                       onPressed: () =>
                           Navigator.pushNamed(context, '/meal_statistics'),
                     ),
                   ],
                 ),
+
+                //The meals obtained are displayed the order of the newest to the oldest
                 body: Padding(
                   padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
                   child: ListView.builder(
                     itemCount: meals.length,
                     itemBuilder: (context, index) {
                       final meal = meals[index];
+
+                      //Meal card to represent a meal
                       return MealCard(
                         meal: meal,
                         onDelete: () async {
@@ -105,6 +114,8 @@ class MealScreen extends StatelessWidget {
             },
           );
         }
+
+        //In case the user is not logged in (Less probable)
 
         return Scaffold(
           appBar: AppBar(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nutritrack/core/services/chatbot_service.dart';
 import '../../core/constants/theme_constants.dart';
+
+//Uncomment the line bellow to use Claude AI services instead
 //import '../../core/services/claude_service.dart';
 import '../../core/services/cohere_service.dart';
 import 'package:file_picker/file_picker.dart';
@@ -21,15 +23,15 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   bool _isLoading = false;
   File? _selectedFile;
 
-  // Static data
+  //pre prepared message requests
   static const List<String> _suggestedQuestions = [
-    "Calculate my daily calorie needs",
     "What's my ideal BMI range?",
     "Create a meal plan for weight loss",
     "Analyze my food diary",
     "Suggest healthy snacks"
   ];
 
+  //initialization...
   @override
   void initState() {
     super.initState();
@@ -46,6 +48,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
   Future<void> _initializeChat() async {
     try {
+      //This is the very first message sent by the Bot
       _addBotMessage(
         "Welcome to NutriTrack AI Assistant! 👋\n\n"
         "I can help you with:\n"
@@ -56,7 +59,6 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         "You can also upload food diaries or nutrition labels for analysis.",
       );
     } catch (e) {
-      print(e);
       _addErrorMessage(
           "Failed to initialize chat. Please check your connection.");
     }
@@ -74,6 +76,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     _addMessage(content, false, isError: true);
   }
 
+  //Message is added and the respective owner is identified (User or Bot)
   void _addMessage(String content, bool isUser, {bool isError = false}) {
     setState(() {
       _messages.add(ChatMessage(
@@ -86,6 +89,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     _scrollToBottom();
   }
 
+  //File Upload implementation
   Future<void> _handleFilePick() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -106,6 +110,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     }
   }
 
+  //Handling the File processing So that the Bot can analize it.
   Future<void> _processFile(String fileName) async {
     if (_selectedFile == null) return;
 
@@ -127,14 +132,17 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     }
   }
 
+  //User message Submition handling
   Future<void> _handleMessageSubmit(String text) async {
     if (text.trim().isEmpty) return;
 
+    //Clear the message controller to ensure it is empty before adding a message
     _messageController.clear();
     _addUserMessage(text);
 
     setState(() => _isLoading = true);
 
+    //handle ChatBot Response
     try {
       final response = await _chatBotService.getResponse(text);
       _addBotMessage(response);
@@ -425,6 +433,7 @@ class _MessageBubble extends StatelessWidget {
   }
 }
 
+//Chat message structure
 class ChatMessage {
   final String content;
   final bool isUser;

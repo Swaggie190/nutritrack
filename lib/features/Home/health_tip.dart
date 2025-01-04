@@ -1,3 +1,4 @@
+// This represents the Structure of a health Tip message
 class HealthTip {
   final String message;
   final String category;

@@ -32,33 +32,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
           height,
           weight,
         );
-        print("User registered successfully");
       } catch (e) {
-        print("Error during user registration: $e");
         throw Exception("Error in registerUser: $e");
       }
 
       try {
+        //Navigate to Home after registering
         Navigator.pushReplacementNamed(context, '/home');
-        print("Navigation to home successful");
       } catch (e) {
-        print("Error during navigation: $e");
         throw Exception("Error in navigation: $e");
       }
     } catch (e) {
-      print("handleRegister encountered an error: $e");
+      //setting state for the error message..
       setState(() {
         errorMessage = e.toString();
       });
     }
   }
 
+  //Sliding effects for height and weight values.
   Widget _buildMeasurementSlider({
     required String label,
     required double value,
     required void Function(double) onChanged,
-    required double min,
-    required double max,
+    required double min, //for min weight or height
+    required double max, // for max weight or height
     required String unit,
     int? divisions,
   }) {
@@ -75,6 +73,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ],
         ),
+
+        //The actual slider implementation
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: ThemeConstants.primaryColor,
@@ -229,6 +229,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  //Disposing so as to clear the form release resources
+  //potentially held by the widget
   @override
   void dispose() {
     emailController.dispose();

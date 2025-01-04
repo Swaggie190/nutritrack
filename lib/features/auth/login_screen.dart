@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   String? errorMessage;
 
+  //Login handler using the Userservice module.
   void handleLogin(BuildContext context) async {
     try {
       final userService = Provider.of<UserService>(context, listen: false);
@@ -59,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  //UI Rendering...
   @override
   Widget build(BuildContext context) {
     return Scaffold(

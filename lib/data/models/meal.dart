@@ -51,7 +51,7 @@ class Meal {
     );
   }
 
-  // Optional: Convert Meal to Firestore format
+  // Convert Meal to Firestore format
   Map<String, dynamic> toFirestore() {
     return {
       'id': id,

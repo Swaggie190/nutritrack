@@ -17,7 +17,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late HealthTip currentTip;
-  String userName = 'User';
+  String userName =
+      'User'; //default userName if the actual name could not be fetched
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -28,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadUserName();
   }
 
+  //fetching user name from firebase
   Future<void> _loadUserName() async {
     final User? user = _auth.currentUser;
     if (user != null) {
@@ -52,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  //Selecting the Health tip message randomly depending on the day
   void _selectDailyTip() {
     final today = DateTime.now().day;
     final tipIndex = today % HealthTipsData.tips.length;
@@ -234,6 +237,8 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () => Navigator.pushNamed(context, '/chat'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+
+      //Buttom Navbar
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
     );
   }

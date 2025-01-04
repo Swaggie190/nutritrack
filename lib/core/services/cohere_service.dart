@@ -16,6 +16,7 @@ class CohereService implements ChatBotService {
     }
   }
 
+  //API implementation as per the Coherer API Documentation.
   @override
   Future<String> getResponse(String message, {File? file}) async {
     try {
@@ -49,7 +50,6 @@ class CohereService implements ChatBotService {
 
   @override
   bool isSupportedFileType(String filePath) {
-    // Cohere might have different file support than Claude
     final extension = path.extension(filePath).toLowerCase();
     return ['.txt', '.csv', '.jpg', '.jpeg', '.png'].contains(extension);
   }

@@ -2,7 +2,7 @@ class User {
   final String id;
   final String name;
   final String email;
-  final String password; // Note: In production, handle password securely
+  final String password;
   final double? height; // in cm
   final double? weight; // in kg
   final int? dailyCalorieGoal;
@@ -57,7 +57,7 @@ class User {
     );
   }
 
-  // Optional: You could add a method to convert the User to a Firestore document format
+  //convert the User to a Firestore document format
   Map<String, dynamic> toFirestore() {
     return {
       'id': id,

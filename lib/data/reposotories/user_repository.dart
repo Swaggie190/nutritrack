@@ -10,13 +10,13 @@ class UserRepository {
     try {
       // Save the user document to Firestore
       await _firestore.collection('users').doc(user.id).set(user.toMap());
-      print("User created successfully in Firestore: ${user.id}");
+      //print("User created successfully in Firestore: ${user.id}");
     } on FirebaseException catch (e) {
-      print("Firestore error during user creation: ${e.message}");
-      print("Full error details: ${e.toString()}"); // Log complete error object
+      //print("Firestore error during user creation: ${e.message}");
+      //print("Full error details: ${e.toString()}"); // Log complete error object
       throw Exception('Failed to create user in Firestore: ${e.message}');
     } catch (e) {
-      print("Unexpected error during Firestore user creation: $e");
+      //print("Unexpected error during Firestore user creation: $e");
       throw Exception("Unexpected error in createUser: $e");
     }
   }
@@ -31,7 +31,7 @@ class UserRepository {
       }
       return null;
     } catch (e) {
-      print('Error getting user: $e');
+      //print('Error getting user: $e');
       throw Exception('Failed to get user: $e');
     }
   }
@@ -56,7 +56,7 @@ class UserRepository {
 
       await _firestore.collection('users').doc(user.id).update(updateData);
     } catch (e) {
-      print('Error updating user: $e');
+      //print('Error updating user: $e');
       throw Exception('Failed to update user: $e');
     }
   }

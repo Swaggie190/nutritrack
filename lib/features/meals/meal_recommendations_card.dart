@@ -6,6 +6,7 @@ class FoodRecommendationCard extends StatelessWidget {
 
   const FoodRecommendationCard({super.key, required this.bmiCategory});
 
+  //meal recommendation based on BMI result
   List<String> _getRecommendations(String category) {
     switch (category) {
       case 'Underweight':

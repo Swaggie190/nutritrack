@@ -1,4 +1,4 @@
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http; //import for http requests
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
@@ -8,9 +8,11 @@ import 'package:nutritrack/core/services/chatbot_service.dart';
 import 'package:path/path.dart' as path;
 
 class AnthropicService implements ChatBotService {
+  //url for Claude chat services
   static const String _baseUrl = 'https://api.anthropic.com/v1/messages';
   late final String _apiKey;
 
+  //Api key fetched from .env file and uploaded to _apiKey
   AnthropicService() {
     _apiKey = dotenv.env['CLAUDE_API_KEY'] ?? '';
     if (_apiKey.isEmpty) {
@@ -18,6 +20,8 @@ class AnthropicService implements ChatBotService {
     }
   }
 
+  //getting response from Claude using http request, and using the format
+  // As per the Anthropic API documentation.
   @override
   Future<String> getResponse(String message, {File? file}) async {
     try {
@@ -42,6 +46,7 @@ class AnthropicService implements ChatBotService {
         ],
       };
 
+      //using mimetvpe to upload files.
       if (file != null) {
         final mimeType = lookupMimeType(file.path);
         if (mimeType == null) {

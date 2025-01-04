@@ -37,6 +37,8 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+
+      //Get user id in real time
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, authSnapshot) {
@@ -55,6 +57,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  //This allows for real time update of user informations automatically
   Widget _buildUserProfileStream(BuildContext context, String userId) {
     return StreamBuilder<nutritrack_user.User?>(
       stream: Provider.of<UserService>(context, listen: false)

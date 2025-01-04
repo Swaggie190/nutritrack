@@ -1,3 +1,4 @@
+//This file Contains the instantiated health tips.
 import 'package:nutritrack/features/Home/health_tip.dart';
 
 class HealthTipsData {

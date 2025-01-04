@@ -7,6 +7,7 @@ class AuthService {
 
   firebase_auth.User? get currentUser => _firebaseAuth.currentUser;
 
+  //Implement User Sign In with firebase
   Future<String?> signIn(String email, String password) async {
     try {
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
