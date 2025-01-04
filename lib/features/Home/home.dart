@@ -65,7 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppConstants.appName, style: ThemeConstants.headingStyle),
+        title: Text(AppConstants.appName,
+            style: ThemeConstants.headingStyle.copyWith(color: Colors.white)),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.menu),
