@@ -52,7 +52,9 @@ class MealScreen extends StatelessWidget {
 
               return Scaffold(
                 appBar: AppBar(
-                  title: Text('Meals', style: ThemeConstants.headingStyle),
+                  title: Text('Meals',
+                      style: ThemeConstants.headingStyle
+                          .copyWith(color: Colors.white)),
                   backgroundColor: ThemeConstants.primaryColor,
                   elevation: ThemeConstants.defaultElevation,
                   actions: [

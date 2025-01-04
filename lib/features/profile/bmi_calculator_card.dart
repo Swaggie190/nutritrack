@@ -65,10 +65,14 @@ class BMICalculatorCard extends StatelessWidget {
         if (user.weight == null || user.height == null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('BMI Result'),
+              title: Text(
+                'BMI Result',
+                style:
+                    ThemeConstants.headingStyle.copyWith(color: Colors.white),
+              ),
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ),
             body: const Center(

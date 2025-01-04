@@ -63,7 +63,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppConstants.appName),
+        title: Text(
+          AppConstants.appName,
+          style: ThemeConstants.headingStyle.copyWith(color: Colors.white),
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(

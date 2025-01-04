@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:nutritrack/features/Home/health_tip.dart';
 import 'package:nutritrack/features/Home/health_tips_data.dart';
 import 'package:nutritrack/widgets/custom_bottom_nav.dart';
+import 'package:nutritrack/widgets/service_unavailable_dialog.dart';
 import '../../core/constants/theme_constants.dart';
 import '../../core/constants/app_constants.dart';
-import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -58,36 +58,11 @@ class _HomeScreenState extends State<HomeScreen> {
     currentTip = HealthTipsData.tips[tipIndex];
   }
 
-  void _showServiceUnavailableDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Service Unavailable',
-              style: ThemeConstants.subheadingStyle),
-          content: Text(
-            'This service is not yet available. Please check back later!',
-            style: ThemeConstants.bodyStyle,
-          ),
-          actions: [
-            TextButton(
-              child: Text('OK',
-                  style: ThemeConstants.bodyStyle.copyWith(
-                    color: ThemeConstants.primaryColor,
-                  )),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppConstants.appName),
+        title: Text(AppConstants.appName, style: ThemeConstants.headingStyle),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.menu),
@@ -219,19 +194,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                       width: ThemeConstants.smallPadding),
                                   _buildQuickActionCard(
                                     context,
-                                    'Set Goals',
-                                    Icons.flag,
-                                    ThemeConstants.warningColor,
-                                    () {},
-                                  ),
-                                  const SizedBox(
-                                      width: ThemeConstants.smallPadding),
-                                  _buildQuickActionCard(
-                                    context,
                                     'Nearby\nRestaurants',
                                     Icons.restaurant,
                                     ThemeConstants.successColor,
-                                    _showServiceUnavailableDialog,
+                                    () => Navigator.pushReplacementNamed(
+                                        context, '/restaurants'),
+                                    //_showServiceUnavailableDialog,
                                   ),
                                   const SizedBox(
                                       width: ThemeConstants.smallPadding),
@@ -240,7 +208,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     'Find\nDietitian',
                                     Icons.local_hospital,
                                     ThemeConstants.errorColor,
-                                    _showServiceUnavailableDialog,
+                                    () => showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          const ServiceUnavailable(),
+                                    ),
                                   ),
                                 ],
                               ),

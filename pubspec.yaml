@@ -50,6 +50,9 @@ dependencies:
   flutter_dotenv: ^5.2.1
   http_parser: ^4.0.2
   path: ^1.9.0
+  latlong2: ^0.9.1
+  flutter_map: ^7.0.2
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +64,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons: 
+    android: "launcher_icon"
+    image_path: "assets/icon/NutriTrack.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

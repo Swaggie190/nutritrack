@@ -1,3 +1,4 @@
+//Import of various packages necessary for building the main
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +13,7 @@ import 'package:nutritrack/core/services/auth_service.dart';
 import 'package:nutritrack/features/auth/register_screen.dart';
 import 'package:nutritrack/features/chat/chatbot_screen.dart';
 import 'package:nutritrack/features/meals/meal_stats_screen.dart';
+import 'package:nutritrack/features/nearby/restaurant_screen.dart';
 import 'package:nutritrack/features/profile/bmi_calculator_card.dart';
 import 'package:nutritrack/features/profile/update_profile_screen.dart';
 import 'package:provider/provider.dart';
@@ -31,18 +33,25 @@ import 'core/services/storage_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  //initializes the Flutter app
   WidgetsFlutterBinding.ensureInitialized();
 
+  //loading confidential informations like APIs from the .env file.
+  //In this case, the cohere API is loaded from the .env file
   try {
     await dotenv.load(fileName: ".env");
   } catch (e) {
     print("Error loading .env file: $e");
   }
+  //initializing Firebase...
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  //local storage of shared informations
   final prefs = await SharedPreferences.getInstance();
+
+  //Instances for Datastorage and authentication through Firebase
   final firestore = FirebaseFirestore.instance;
   final auth = FirebaseAuth.instance;
 
@@ -113,6 +122,7 @@ class NutriTrackApp extends StatelessWidget {
         '/bmi_calculator': (context) => const BMICalculatorCard(),
         '/register': (context) => const RegisterScreen(),
         '/chat': (context) => const ChatBotScreen(),
+        '/restaurants': (context) => const NearbyRestaurantsPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/home') {
@@ -126,6 +136,7 @@ class NutriTrackApp extends StatelessWidget {
     );
   }
 
+  //Handles the state of authentication to check if a user exists or not.
   Widget _handleAuthState(BuildContext context) {
     return StreamBuilder<firebase_auth.User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
@@ -145,7 +156,6 @@ class NutriTrackApp extends StatelessWidget {
           userFuture = Provider.of<UserService>(context, listen: false)
               .getUser(firebaseUser.uid);
         } catch (e) {
-          print('Error setting up user future: $e');
           userFuture = Future.value(null);
         }
 

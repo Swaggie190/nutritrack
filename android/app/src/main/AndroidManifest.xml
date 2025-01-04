@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.NT.app">
+    <uses-permission android:name="android.uses-permission.INTERNET"/>
+    <uses-permission android:name="android.uses-permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.uses-permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="nutritrack"
         android:name="${applicationName}"

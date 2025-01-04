@@ -14,7 +14,12 @@ class MealStatisticsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meal Statistics', style: ThemeConstants.headingStyle),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text('Meal Statistics',
+            style: ThemeConstants.headingStyle.copyWith(color: Colors.white)),
         centerTitle: true,
         elevation: ThemeConstants.largeElevation,
       ),

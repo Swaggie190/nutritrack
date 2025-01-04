@@ -15,8 +15,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Profile',
-            style:
-                ThemeConstants.subheadingStyle.copyWith(color: Colors.white)),
+            style: ThemeConstants.headingStyle.copyWith(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),

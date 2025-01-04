@@ -4,35 +4,21 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
+import 'package:nutritrack/core/services/chatbot_service.dart';
 import 'package:path/path.dart' as path;
 
-class ClaudeMessage {
-  final String content;
-  final bool isUser;
-  final DateTime timestamp;
-  final bool isError;
-  final String? fileName;
-
-  ClaudeMessage({
-    required this.content,
-    required this.isUser,
-    required this.timestamp,
-    this.isError = false,
-    this.fileName,
-  });
-}
-
-class ClaudeService {
+class AnthropicService implements ChatBotService {
   static const String _baseUrl = 'https://api.anthropic.com/v1/messages';
   late final String _apiKey;
 
-  ClaudeService() {
+  AnthropicService() {
     _apiKey = dotenv.env['CLAUDE_API_KEY'] ?? '';
     if (_apiKey.isEmpty) {
       throw Exception('Claude API key not found in environment variables');
     }
   }
 
+  @override
   Future<String> getResponse(String message, {File? file}) async {
     try {
       var request = http.MultipartRequest('POST', Uri.parse(_baseUrl));
@@ -135,11 +121,9 @@ class ClaudeService {
         return data['content'][0]['text'];
       } else {
         print('API Error: ${response.statusCode}, Response: $responseString');
-        throw Exception(
-            'API Error: ${response.statusCode}'); // Re-throwing the exception after printing.
+        throw Exception('API Error: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error getting Claude response: ${e.toString()}');
       throw Exception('Failed to get response: $e');
     }
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nutritrack/core/services/chatbot_service.dart';
 import '../../core/constants/theme_constants.dart';
-import '../../core/services/claude_service.dart';
+//import '../../core/services/claude_service.dart';
+import '../../core/services/cohere_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
@@ -14,8 +16,8 @@ class ChatBotScreen extends StatefulWidget {
 class _ChatBotScreenState extends State<ChatBotScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final List<ClaudeMessage> _messages = [];
-  late final ClaudeService _claudeService;
+  final List<ChatMessage> _messages = [];
+  late final ChatBotService _chatBotService;
   bool _isLoading = false;
   File? _selectedFile;
 
@@ -31,6 +33,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   @override
   void initState() {
     super.initState();
+    _chatBotService = CohereService();
     _initializeChat();
   }
 
@@ -43,7 +46,6 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
   Future<void> _initializeChat() async {
     try {
-      _claudeService = ClaudeService();
       _addBotMessage(
         "Welcome to NutriTrack AI Assistant! 👋\n\n"
         "I can help you with:\n"
@@ -54,6 +56,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         "You can also upload food diaries or nutrition labels for analysis.",
       );
     } catch (e) {
+      print(e);
       _addErrorMessage(
           "Failed to initialize chat. Please check your connection.");
     }
@@ -73,7 +76,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
   void _addMessage(String content, bool isUser, {bool isError = false}) {
     setState(() {
-      _messages.add(ClaudeMessage(
+      _messages.add(ChatMessage(
         content: content,
         isUser: isUser,
         timestamp: DateTime.now(),
@@ -109,7 +112,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await _claudeService.getResponse(
+      final response = await _chatBotService.getResponse(
         "Please analyze this file: $fileName",
         file: _selectedFile,
       );
@@ -133,7 +136,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await _claudeService.getResponse(text);
+      final response = await _chatBotService.getResponse(text);
       _addBotMessage(response);
     } catch (e) {
       _addErrorMessage("Failed to get response. Please try again.");
@@ -177,7 +180,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      title: const Text('AI Nutrition Assistant'),
+      title: Text('AI Nutrition Assistant',
+          style: ThemeConstants.headingStyle.copyWith(color: Colors.white)),
       backgroundColor: ThemeConstants.primaryColor,
       actions: [
         IconButton(
@@ -364,7 +368,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 }
 
 class _MessageBubble extends StatelessWidget {
-  final ClaudeMessage message;
+  final ChatMessage message;
 
   const _MessageBubble({required this.message});
 
@@ -419,4 +423,20 @@ class _MessageBubble extends StatelessWidget {
       ),
     );
   }
+}
+
+class ChatMessage {
+  final String content;
+  final bool isUser;
+  final DateTime timestamp;
+  final bool isError;
+  final String? fileName;
+
+  ChatMessage({
+    required this.content,
+    required this.isUser,
+    required this.timestamp,
+    this.isError = false,
+    this.fileName,
+  });
 }
