@@ -66,9 +66,12 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   flutter_launcher_icons: ^0.13.1
 
-flutter_launcher_icons: 
-    android: "launcher_icon"
-    image_path: "/assets/icon/NutriTrack.png"
+flutter_launcher_icons:
+  android: true 
+  ios: true
+  image_path: "assets/icon/NutriTrack.png"  
+  adaptive_icon_background: "#ffffff" 
+  adaptive_icon_foreground: "assets/icon/NutriTrack.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
