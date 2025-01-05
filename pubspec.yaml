@@ -68,7 +68,7 @@ dev_dependencies:
 
 flutter_launcher_icons: 
     android: "launcher_icon"
-    image_path: "assets/icon/NutriTrack.png"
+    image_path: "/assets/icon/NutriTrack.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

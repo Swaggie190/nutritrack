@@ -114,10 +114,6 @@ class _NearbyRestaurantsPageState extends State<NearbyRestaurantsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
         title: Text('Nearby Restaurants',
             style: ThemeConstants.headingStyle.copyWith(color: Colors.white)),
         actions: [

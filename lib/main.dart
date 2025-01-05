@@ -31,17 +31,32 @@ import 'core/constants/app_constants.dart';
 import 'core/constants/theme_constants.dart';
 import 'core/services/storage_service.dart';
 import 'firebase_options.dart';
+import 'dart:io';
 
 void main() async {
+    print("Current directory: ${Directory.current.path}");
   //initializes the Flutter app
   WidgetsFlutterBinding.ensureInitialized();
 
   //loading confidential informations like APIs from the .env file.
   //In this case, the cohere API is loaded from the .env file
   try {
-    await dotenv.load(fileName: ".env");
+    print("Attempting to load .env file...");
+    await dotenv.load(fileName: "assets/.env");
+    print("Loaded .env file successfully");
+    print("COHERE_API_KEY exists: ${dotenv.env.containsKey('COHERE_API_KEY')}");
   } catch (e) {
-    print("Error loading .env file: $e");
+    print("Failed to load environment variables: $e");
+    // You might want to handle this error more gracefully
+    // For example, showing a user-friendly error message
+    runApp(const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text("Failed to initialize app. Please contact support."),
+        ),
+      ),
+    ));
+    return;
   }
   //initializing Firebase...
   await Firebase.initializeApp(

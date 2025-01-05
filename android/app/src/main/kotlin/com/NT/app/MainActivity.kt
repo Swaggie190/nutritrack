@@ -1,4 +1,4 @@
-package com.example.nutritrack
+package com.NT.app
 
 import io.flutter.embedding.android.FlutterActivity
 

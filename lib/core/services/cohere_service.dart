@@ -10,9 +10,14 @@ class CohereService implements ChatBotService {
   late final String _apiKey;
 
   CohereService() {
-    _apiKey = dotenv.env['COHERE_API_KEY'] ?? '';
-    if (_apiKey.isEmpty) {
-      throw Exception('Cohere API key not found in environment variables');
+    try {
+      _apiKey = dotenv.env['COHERE_API_KEY'] ?? '';
+      if (_apiKey.isEmpty) {
+        throw Exception('COHERE_API_KEY not found in environment variables');
+      }
+    } catch (e) {
+      throw Exception('Failed to initialize CohereService: $e. '
+          'Make sure the .env file is properly configured in assets/.env');
     }
   }
 

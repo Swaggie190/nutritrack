@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     'Check BMI',
                                     Icons.monitor_weight,
                                     ThemeConstants.secondaryColor,
-                                    () => Navigator.pushReplacementNamed(
+                                    () => Navigator.pushNamed(
                                         context, '/bmi_calculator'),
                                   ),
                                   const SizedBox(
@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     'Nearby\nRestaurants',
                                     Icons.restaurant,
                                     ThemeConstants.successColor,
-                                    () => Navigator.pushReplacementNamed(
+                                    () => Navigator.pushNamed(
                                         context, '/restaurants'),
                                     //_showServiceUnavailableDialog,
                                   ),
@@ -232,13 +232,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: ThemeConstants.primaryColor,
         child: const Icon(Icons.support_agent),
         onPressed: () => Navigator.pushNamed(context, '/chat'),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-
       //Buttom Navbar
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
     );

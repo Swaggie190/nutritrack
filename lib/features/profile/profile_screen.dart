@@ -327,8 +327,7 @@ class ProfileScreen extends StatelessWidget {
                     BorderRadius.circular(ThemeConstants.defaultBorderRadius),
               ),
             ),
-            onPressed: () =>
-                Navigator.pushReplacementNamed(context, '/bmi_calculator'),
+            onPressed: () => Navigator.pushNamed(context, '/bmi_calculator'),
             child: Text(
               'Calculate BMI',
               style: ThemeConstants.bodyStyle.copyWith(color: Colors.white),
