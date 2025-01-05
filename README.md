@@ -44,7 +44,7 @@ NutriTrack is a comprehensive mobile application designed to help users manage t
 
 ## Installation
 
-1. Download the APK file from the [GitHub releases section](https://github.com/Swaggie190/nutritrack/releases) or directly from [this link](https://github.com/Swaggie190/nutritrack/releases/app-releases.apk).
+1. Download the APK file from the [GitHub releases section](https://github.com/Swaggie190/nutritrack/releases) or directly from [this link](https://github.com/Swaggie190/nutritrack/releases/download/untagged-a1816c54ab92292955a5/app-release.apk).
 2. Enable "Install from Unknown Sources" in your Android device settings.
 3. Open the downloaded APK file.
 4. Follow the installation prompts.
