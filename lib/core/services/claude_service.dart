@@ -33,7 +33,7 @@ class AnthropicService implements ChatBotService {
       });
 
       var messageData = {
-        'model': 'claude-3-opus-20240229',
+        'model': 'claude-3-5-sonnet-20241022', // Updated to latest Sonnet model (faster, cheaper, better)
         'max_tokens': 1024,
         'messages': [
           {
