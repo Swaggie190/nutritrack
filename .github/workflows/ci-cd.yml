@@ -22,6 +22,11 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Create dummy .env file
+        run: |
+          mkdir -p assets
+          touch assets/.env
+
       - name: Get dependencies
         run: flutter pub get
 
@@ -48,6 +53,11 @@ jobs:
           flutter-version: '3.41.6'
           channel: 'stable'
           cache: true
+
+      - name: Create dummy .env file
+        run: |
+          mkdir -p assets
+          touch assets/.env
 
       - name: Get dependencies
         run: flutter pub get
