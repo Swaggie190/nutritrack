@@ -151,7 +151,7 @@ class MacroDisplay extends StatelessWidget {
     Color color,
     IconData icon,
   ) {
-    final percentage = totalCals > 0 ? (calories / totalCals) : 0;
+    final percentage = totalCals > 0 ? (calories / totalCals) : 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
