@@ -92,14 +92,18 @@ class ThemeConstants {
 
   static ThemeData get lightTheme {
     return ThemeData(
-      primaryColor: primaryColor,
-      colorScheme: const ColorScheme.light(
-        primary: primaryColor,
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primaryColor,
+        brightness: Brightness.light,
         secondary: secondaryColor,
         error: errorColor,
       ),
+      primaryColor: primaryColor,
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
         elevation: defaultElevation,
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 20,
@@ -118,6 +122,52 @@ class ThemeConstants {
           borderRadius: BorderRadius.all(Radius.circular(defaultBorderRadius)),
         ),
       ),
+      textTheme: TextTheme(
+        headlineMedium: headingStyle,
+        headlineSmall: subheadingStyle,
+        bodyLarge: bodyStyle,
+        bodyMedium: bodyStyle,
+      ),
     );
   }
-}
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primaryColor,
+        brightness: Brightness.dark,
+        secondary: secondaryColor,
+        error: errorColor,
+      ),
+      primaryColor: primaryColor,
+      appBarTheme: AppBarTheme(
+        backgroundColor: primaryColor.withOpacity(0.9),
+        foregroundColor: Colors.white,
+        elevation: defaultElevation,
+        titleTextStyle: GoogleFonts.poppins(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+      ),
+      buttonTheme: ButtonThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(defaultBorderRadius),
+        ),
+      ),
+      cardTheme: const CardThemeData(
+        elevation: defaultElevation,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(defaultBorderRadius)),
+        ),
+      ),
+      textTheme: TextTheme(
+        headlineMedium: headingStyle.copyWith(color: Colors.white),
+        headlineSmall: subheadingStyle.copyWith(color: Colors.white),
+        bodyLarge: bodyStyle.copyWith(color: Colors.white70),
+        bodyMedium: bodyStyle.copyWith(color: Colors.white70),
+      ),
+    );
+  }
