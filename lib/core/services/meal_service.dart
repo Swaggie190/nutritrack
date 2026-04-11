@@ -12,15 +12,32 @@ class MealService {
     required String name,
     required int calories,
     String? notes,
+    double? protein,
+    double? carbs,
+    double? fats,
+    MealType? mealType,
+    double? servingSize,
+    String? servingUnit,
+    String? photoUrl,
+    List<String>? tags,
+    DateTime? consumedAt,
   }) async {
     try {
       final meal = Meal(
-        id: DateTime.now().millisecondsSinceEpoch.toString(), // or use UUID
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: userId,
         name: name,
         calories: calories,
-        consumedAt: DateTime.now(),
+        consumedAt: consumedAt ?? DateTime.now(),
         notes: notes,
+        protein: protein,
+        carbs: carbs,
+        fats: fats,
+        mealType: mealType ?? MealType.other,
+        servingSize: servingSize,
+        servingUnit: servingUnit,
+        photoUrl: photoUrl,
+        tags: tags,
       );
 
       await _mealRepository.addMeal(meal);
@@ -128,15 +145,101 @@ class MealService {
   }
 
   // Get meals by type (breakfast, lunch, dinner, snack)
-  Future<List<Meal>> getMealsByType(String userId, String mealType) async {
+  Future<List<Meal>> getMealsByType(String userId, MealType mealType) async {
     try {
       final meals = await getUserMeals(userId);
-      return meals
-          .where((meal) =>
-              meal.name.toLowerCase().contains(mealType.toLowerCase()))
-          .toList();
+      return meals.where((meal) => meal.mealType == mealType).toList();
     } catch (e) {
       throw Exception('Failed to get meals by type: $e');
+    }
+  }
+
+  // Get macronutrient statistics for a specific date
+  Future<Map<String, double>> getMacroStatistics(
+      String userId, DateTime date) async {
+    try {
+      final meals = await getUserMeals(userId);
+      final dayMeals = meals.where((meal) =>
+          meal.consumedAt.year == date.year &&
+          meal.consumedAt.month == date.month &&
+          meal.consumedAt.day == date.day);
+
+      double totalProtein = 0;
+      double totalCarbs = 0;
+      double totalFats = 0;
+
+      for (var meal in dayMeals) {
+        totalProtein += meal.protein ?? 0;
+        totalCarbs += meal.carbs ?? 0;
+        totalFats += meal.fats ?? 0;
+      }
+
+      return {
+        'protein': totalProtein,
+        'carbs': totalCarbs,
+        'fats': totalFats,
+      };
+    } catch (e) {
+      throw Exception('Failed to get macro statistics: $e');
+    }
+  }
+
+  // Get meal type distribution (count and calories by meal type)
+  Future<Map<String, Map<String, int>>> getMealTypeDistribution(
+    String userId,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    try {
+      final meals = await getUserMeals(userId);
+      final filteredMeals = meals.where((meal) =>
+          meal.consumedAt.isAfter(startDate.subtract(const Duration(days: 1))) &&
+          meal.consumedAt.isBefore(endDate.add(const Duration(days: 1))));
+
+      Map<String, Map<String, int>> distribution = {};
+
+      for (var mealType in MealType.values) {
+        final typeMeals =
+            filteredMeals.where((meal) => meal.mealType == mealType);
+        distribution[mealType.displayName] = {
+          'count': typeMeals.length,
+          'calories': typeMeals.fold(0, (sum, meal) => sum + meal.calories),
+        };
+      }
+
+      return distribution;
+    } catch (e) {
+      throw Exception('Failed to get meal type distribution: $e');
+    }
+  }
+
+  // Get nutritional breakdown for enhanced statistics
+  Future<Map<String, dynamic>> getNutritionalBreakdown(
+      String userId, DateTime date) async {
+    try {
+      final macros = await getMacroStatistics(userId, date);
+      final calories = await getCaloriesForDate(userId, date);
+
+      // Calculate calories from macros (if available)
+      final proteinCals = (macros['protein'] ?? 0) * 4; // 4 cal/g
+      final carbsCals = (macros['carbs'] ?? 0) * 4; // 4 cal/g
+      final fatsCals = (macros['fats'] ?? 0) * 9; // 9 cal/g
+      final totalMacroCals = proteinCals + carbsCals + fatsCals;
+
+      return {
+        'calories': calories,
+        'protein': macros['protein'],
+        'carbs': macros['carbs'],
+        'fats': macros['fats'],
+        'proteinPercentage':
+            totalMacroCals > 0 ? (proteinCals / totalMacroCals * 100) : 0,
+        'carbsPercentage':
+            totalMacroCals > 0 ? (carbsCals / totalMacroCals * 100) : 0,
+        'fatsPercentage':
+            totalMacroCals > 0 ? (fatsCals / totalMacroCals * 100) : 0,
+      };
+    } catch (e) {
+      throw Exception('Failed to get nutritional breakdown: $e');
     }
   }
 
