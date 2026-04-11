@@ -27,8 +27,10 @@ class ProfileScreen extends StatelessWidget {
               try {
                 await Provider.of<UserService>(context, listen: false)
                     .signOut(context);
+                if (!context.mounted) return;
                 Navigator.pushReplacementNamed(context, '/login');
               } catch (e) {
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Logout failed: $e')),
                 );

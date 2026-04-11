@@ -36,6 +36,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         throw Exception("Error in registerUser: $e");
       }
 
+      if (!context.mounted) return;
+
       try {
         //Navigate to Home after registering
         Navigator.pushReplacementNamed(context, '/home');

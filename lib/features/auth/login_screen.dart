@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final userService = Provider.of<UserService>(context, listen: false);
       final userId = await userService.signInUser(
           context, emailController.text.trim(), passwordController.text.trim());
-      if (userId != null) {
+      if (userId != null && context.mounted) {
         Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
@@ -44,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
       await authService.resetPassword(emailController.text.trim());
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

@@ -44,14 +44,16 @@ class _MealEditCardState extends State<MealEditCard> {
       try {
         final mealService = Provider.of<MealService>(context, listen: false);
         await mealService.updateMeal(updatedMeal);
+        if (!context.mounted) return;
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Meal updated successfully'),
+          const SnackBar(
+            content: Text('Meal updated successfully'),
             backgroundColor: ThemeConstants.successColor,
           ),
         );
       } catch (e) {
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to update meal: $e'),

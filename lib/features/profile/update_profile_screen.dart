@@ -108,6 +108,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
           if (_emailController.text != _user!.email && currentUser != null) {
             try {
               await currentUser.verifyBeforeUpdateEmail(_emailController.text);
+              if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(

@@ -44,14 +44,16 @@ class _AddMealScreenState extends State<AddMealScreen> {
           notes: _notes,
         );
 
+        if (!context.mounted) return;
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Meal added successfully'),
+          const SnackBar(
+            content: Text('Meal added successfully'),
             backgroundColor: ThemeConstants.successColor,
           ),
         );
       } catch (e) {
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to add meal: $e'),

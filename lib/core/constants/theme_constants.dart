@@ -112,10 +112,10 @@ class ThemeConstants {
           borderRadius: BorderRadius.circular(defaultBorderRadius),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: const CardThemeData(
         elevation: defaultElevation,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(defaultBorderRadius),
+          borderRadius: BorderRadius.all(Radius.circular(defaultBorderRadius)),
         ),
       ),
     );

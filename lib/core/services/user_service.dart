@@ -44,9 +44,11 @@ class UserService {
     } catch (e) {
       // Log and rethrow the error for the caller
       print("registerUser encountered an error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
+      }
       rethrow;
     }
   }
@@ -68,9 +70,11 @@ class UserService {
     try {
       await _userRepository.updateUser(user, updatedUser);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
       rethrow;
     }
   }
@@ -93,9 +97,11 @@ class UserService {
     try {
       await _authService.signOut();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
       rethrow;
     }
   }

@@ -41,8 +41,11 @@ class MealScreen extends StatelessWidget {
               }
 
               if (!mealsSnapshot.hasData || mealsSnapshot.data!.isEmpty) {
-                Future.microtask(
-                    () => Navigator.pushReplacementNamed(context, '/add_meal'));
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(context, '/add_meal');
+                  }
+                });
                 return const Scaffold(
                   body: Center(
                     child: CircularProgressIndicator(),
@@ -84,6 +87,7 @@ class MealScreen extends StatelessWidget {
                         meal: meal,
                         onDelete: () async {
                           await mealService.deleteMeal(meal.id);
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
