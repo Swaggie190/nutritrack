@@ -137,6 +137,11 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Create dummy .env file
+        run: |
+          mkdir -p assets
+          touch assets/.env
+
       - name: Get dependencies
         run: flutter pub get
 
