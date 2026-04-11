@@ -7,13 +7,16 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-def keystoreProperties = new Properties() // Add this line to initialize keystoreProperties
+def keystoreProperties = new Properties()
 def keystorePropertiesFile = file('../key.properties')
-println "Looking for key.properties at: " + keystorePropertiesFile.getAbsolutePath()
+def hasKeystore = false
+
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    hasKeystore = true
+    println "Found key.properties - using release signing"
 } else {
-    throw new FileNotFoundException("Key properties file not found at: " + keystorePropertiesFile.getAbsolutePath())
+    println "key.properties not found - using debug signing for release builds"
 }
 
 
@@ -23,11 +26,13 @@ android {
     ndkVersion = flutter.ndkVersion
 
     signingConfigs {
-        release {
-            storeFile file(keystoreProperties['storeFile']) // Ensure this matches your keystore
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
+        if (hasKeystore) {
+            release {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
         }
     }
 
@@ -51,7 +56,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            signingConfig hasKeystore ? signingConfigs.release : signingConfigs.debug
             shrinkResources false
             minifyEnabled false
         }
