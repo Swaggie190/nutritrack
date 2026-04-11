@@ -193,7 +193,8 @@ class MealService {
     try {
       final meals = await getUserMeals(userId);
       final filteredMeals = meals.where((meal) =>
-          meal.consumedAt.isAfter(startDate.subtract(const Duration(days: 1))) &&
+          meal.consumedAt
+              .isAfter(startDate.subtract(const Duration(days: 1))) &&
           meal.consumedAt.isBefore(endDate.add(const Duration(days: 1))));
 
       Map<String, Map<String, int>> distribution = {};

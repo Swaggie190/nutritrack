@@ -34,7 +34,7 @@ import 'firebase_options.dart';
 import 'dart:io';
 
 void main() async {
-    print("Current directory: ${Directory.current.path}");
+  print("Current directory: ${Directory.current.path}");
   //initializes the Flutter app
   WidgetsFlutterBinding.ensureInitialized();
 

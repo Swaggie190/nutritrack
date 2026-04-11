@@ -261,8 +261,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                 keyboardType: TextInputType.number,
                                 validator: _trackMacros
                                     ? (value) {
-                                        if (value != null &&
-                                            value.isNotEmpty) {
+                                        if (value != null && value.isNotEmpty) {
                                           final protein =
                                               double.tryParse(value);
                                           if (protein == null || protein < 0) {
@@ -290,8 +289,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                 keyboardType: TextInputType.number,
                                 validator: _trackMacros
                                     ? (value) {
-                                        if (value != null &&
-                                            value.isNotEmpty) {
+                                        if (value != null && value.isNotEmpty) {
                                           final carbs = double.tryParse(value);
                                           if (carbs == null || carbs < 0) {
                                             return 'Invalid value';
@@ -318,8 +316,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                 keyboardType: TextInputType.number,
                                 validator: _trackMacros
                                     ? (value) {
-                                        if (value != null &&
-                                            value.isNotEmpty) {
+                                        if (value != null && value.isNotEmpty) {
                                           final fats = double.tryParse(value);
                                           if (fats == null || fats < 0) {
                                             return 'Invalid value';

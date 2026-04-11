@@ -35,10 +35,13 @@ class StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(ThemeConstants.defaultBorderRadius),
         child: Container(
           padding: EdgeInsets.all(
-            isCompact ? ThemeConstants.smallPadding : ThemeConstants.defaultPadding,
+            isCompact
+                ? ThemeConstants.smallPadding
+                : ThemeConstants.defaultPadding,
           ),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ThemeConstants.defaultBorderRadius),
+            borderRadius:
+                BorderRadius.circular(ThemeConstants.defaultBorderRadius),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -107,7 +110,8 @@ class StatCard extends StatelessWidget {
                   Flexible(
                     child: Text(
                       value,
-                      style: ThemeConstants.statNumberStyle.copyWith(color: color),
+                      style:
+                          ThemeConstants.statNumberStyle.copyWith(color: color),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -145,7 +149,9 @@ class StatCard extends StatelessWidget {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: isPositive ? ThemeConstants.successColor : ThemeConstants.errorColor,
+          color: isPositive
+              ? ThemeConstants.successColor
+              : ThemeConstants.errorColor,
         ),
       ),
     );

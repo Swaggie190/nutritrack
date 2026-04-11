@@ -61,7 +61,8 @@ class CalorieLineChart extends StatelessWidget {
                 reservedSize: 30,
                 interval: 1,
                 getTitlesWidget: (value, meta) {
-                  if (value.toInt() >= sortedDates.length) return const Text('');
+                  if (value.toInt() >= sortedDates.length)
+                    return const Text('');
                   final date = sortedDates[value.toInt()];
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),

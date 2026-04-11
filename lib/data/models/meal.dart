@@ -129,7 +129,9 @@ class Meal {
       servingSize: firestoreData['servingSize']?.toDouble(),
       servingUnit: firestoreData['servingUnit'],
       photoUrl: firestoreData['photoUrl'],
-      tags: firestoreData['tags'] != null ? List<String>.from(firestoreData['tags']) : null,
+      tags: firestoreData['tags'] != null
+          ? List<String>.from(firestoreData['tags'])
+          : null,
     );
   }
 
