@@ -177,7 +177,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           publish_branch: gh-pages-preview
-          cname: nutritrack-preview.example.com  # Update with your domain
 
   deploy-production:
     name: Deploy Production (Main Branch)
@@ -197,7 +196,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           publish_branch: gh-pages
-          cname: nutritrack.example.com  # Update with your domain
 
   release:
     name: Create GitHub Release
