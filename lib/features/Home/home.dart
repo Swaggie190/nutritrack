@@ -159,7 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 40,
                             errorBuilder: (context, error, stackTrace) =>
                                 const Icon(Icons.restaurant_menu,
-                                    size: 40, color: ThemeConstants.primaryColor),
+                                    size: 40,
+                                    color: ThemeConstants.primaryColor),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -265,7 +266,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: ThemeConstants.primaryColor.withValues(alpha: 0.2),
+                        color:
+                            ThemeConstants.primaryColor.withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -279,7 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: ThemeConstants.primaryColor.withValues(alpha: 0.2),
+                                  color: ThemeConstants.primaryColor
+                                      .withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Icon(
@@ -331,8 +334,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Card(
                           elevation: ThemeConstants.defaultElevation,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.all(ThemeConstants.defaultPadding),
+                            padding: const EdgeInsets.all(
+                                ThemeConstants.defaultPadding),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -347,7 +350,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         style: ThemeConstants.cardTitleStyle),
                                   ],
                                 ),
-                                const SizedBox(height: ThemeConstants.smallPadding),
+                                const SizedBox(
+                                    height: ThemeConstants.smallPadding),
                                 Text(currentTip.message,
                                     style: ThemeConstants.bodyStyle),
                                 if (currentTip.source != null) ...[
@@ -366,70 +370,70 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         // Quick Actions Section
                         Card(
-                      elevation: ThemeConstants.defaultElevation,
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.all(ThemeConstants.defaultPadding),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Quick Actions',
-                                style: ThemeConstants.cardTitleStyle),
-                            const SizedBox(
-                                height: ThemeConstants.defaultPadding),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  _buildQuickActionCard(
-                                    context,
-                                    'Track Meal',
-                                    Icons.restaurant_menu,
-                                    ThemeConstants.primaryColor,
-                                    () => Navigator.pushReplacementNamed(
-                                        context, '/meals'),
+                          elevation: ThemeConstants.defaultElevation,
+                          child: Padding(
+                            padding: const EdgeInsets.all(
+                                ThemeConstants.defaultPadding),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Quick Actions',
+                                    style: ThemeConstants.cardTitleStyle),
+                                const SizedBox(
+                                    height: ThemeConstants.defaultPadding),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      _buildQuickActionCard(
+                                        context,
+                                        'Track Meal',
+                                        Icons.restaurant_menu,
+                                        ThemeConstants.primaryColor,
+                                        () => Navigator.pushReplacementNamed(
+                                            context, '/meals'),
+                                      ),
+                                      const SizedBox(
+                                          width: ThemeConstants.smallPadding),
+                                      _buildQuickActionCard(
+                                        context,
+                                        'Check BMI',
+                                        Icons.monitor_weight,
+                                        ThemeConstants.secondaryColor,
+                                        () => Navigator.pushNamed(
+                                            context, '/bmi_calculator'),
+                                      ),
+                                      const SizedBox(
+                                          width: ThemeConstants.smallPadding),
+                                      _buildQuickActionCard(
+                                        context,
+                                        'Nearby\nRestaurants',
+                                        Icons.restaurant,
+                                        ThemeConstants.successColor,
+                                        () => Navigator.pushNamed(
+                                            context, '/restaurants'),
+                                        //_showServiceUnavailableDialog,
+                                      ),
+                                      const SizedBox(
+                                          width: ThemeConstants.smallPadding),
+                                      _buildQuickActionCard(
+                                        context,
+                                        'Find\nDietitian',
+                                        Icons.local_hospital,
+                                        ThemeConstants.errorColor,
+                                        () => showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              const ServiceUnavailable(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(
-                                      width: ThemeConstants.smallPadding),
-                                  _buildQuickActionCard(
-                                    context,
-                                    'Check BMI',
-                                    Icons.monitor_weight,
-                                    ThemeConstants.secondaryColor,
-                                    () => Navigator.pushNamed(
-                                        context, '/bmi_calculator'),
-                                  ),
-                                  const SizedBox(
-                                      width: ThemeConstants.smallPadding),
-                                  _buildQuickActionCard(
-                                    context,
-                                    'Nearby\nRestaurants',
-                                    Icons.restaurant,
-                                    ThemeConstants.successColor,
-                                    () => Navigator.pushNamed(
-                                        context, '/restaurants'),
-                                    //_showServiceUnavailableDialog,
-                                  ),
-                                  const SizedBox(
-                                      width: ThemeConstants.smallPadding),
-                                  _buildQuickActionCard(
-                                    context,
-                                    'Find\nDietitian',
-                                    Icons.local_hospital,
-                                    ThemeConstants.errorColor,
-                                    () => showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          const ServiceUnavailable(),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
                       ],
                     ),
                   ),

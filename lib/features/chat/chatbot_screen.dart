@@ -45,7 +45,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
       await _initializeChat();
     } catch (e) {
       setState(() {
-        _initError = 'Failed to initialize AI service. Please check your API key configuration in settings.';
+        _initError =
+            'Failed to initialize AI service. Please check your API key configuration in settings.';
       });
       _addErrorMessage(_initError!);
     }
@@ -126,7 +127,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   Future<void> _processFile(String fileName) async {
     if (_selectedFile == null || _chatBotService == null) {
       if (_chatBotService == null) {
-        _addErrorMessage("AI service is not available. Please check your configuration.");
+        _addErrorMessage(
+            "AI service is not available. Please check your configuration.");
       }
       return;
     }
@@ -154,7 +156,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     if (text.trim().isEmpty) return;
 
     if (_chatBotService == null) {
-      _addErrorMessage("AI service is not available. Please check your API key configuration.");
+      _addErrorMessage(
+          "AI service is not available. Please check your API key configuration.");
       return;
     }
 

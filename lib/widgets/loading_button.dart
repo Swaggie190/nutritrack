@@ -42,7 +42,8 @@ class LoadingButton extends StatelessWidget {
             foregroundColor: btnColor,
             side: BorderSide(color: btnColor, width: 2),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(ThemeConstants.defaultBorderRadius),
+              borderRadius:
+                  BorderRadius.circular(ThemeConstants.defaultBorderRadius),
             ),
           ),
           child: _buildButtonChild(btnColor),
@@ -60,7 +61,8 @@ class LoadingButton extends StatelessWidget {
           foregroundColor: txtColor,
           disabledBackgroundColor: btnColor.withOpacity(0.6),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ThemeConstants.defaultBorderRadius),
+            borderRadius:
+                BorderRadius.circular(ThemeConstants.defaultBorderRadius),
           ),
           elevation: isLoading ? 0 : 2,
         ),
