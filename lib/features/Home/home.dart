@@ -107,23 +107,226 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Welcome back, $userName! 👋',
-              style: ThemeConstants.headingStyle,
+      body: Column(
+        children: [
+          // Modern Welcome Banner with Gradient
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  ThemeConstants.primaryColor,
+                  ThemeConstants.primaryColor.withValues(alpha: 0.8),
+                  ThemeConstants.secondaryColor.withValues(alpha: 0.6),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: ThemeConstants.primaryColor.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
-            const SizedBox(height: ThemeConstants.defaultPadding),
-            Expanded(
-              child: SingleChildScrollView(
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Daily Health Tip Card
-                    Card(
+                    Row(
+                      children: [
+                        // Logo
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            height: 40,
+                            width: 40,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.restaurant_menu,
+                                    size: 40, color: ThemeConstants.primaryColor),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Welcome back! 👋',
+                                style: ThemeConstants.bodyStyle.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                userName,
+                                style: ThemeConstants.headingStyle.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Main Content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(ThemeConstants.defaultPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Quick Actions Grid (Improved Layout)
+                  Text(
+                    'Quick Actions',
+                    style: ThemeConstants.subheadingStyle.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    childAspectRatio: 1.4,
+                    children: [
+                      _buildModernActionCard(
+                        context,
+                        'Track Meal',
+                        Icons.restaurant_menu,
+                        ThemeConstants.primaryColor,
+                        () => Navigator.pushNamed(context, '/add_meal'),
+                      ),
+                      _buildModernActionCard(
+                        context,
+                        'View Meals',
+                        Icons.list_alt,
+                        ThemeConstants.secondaryColor,
+                        () => Navigator.pushNamed(context, '/meals'),
+                      ),
+                      _buildModernActionCard(
+                        context,
+                        'BMI Calculator',
+                        Icons.monitor_weight,
+                        ThemeConstants.warningColor,
+                        () => Navigator.pushNamed(context, '/bmi_calculator'),
+                      ),
+                      _buildModernActionCard(
+                        context,
+                        'Restaurants',
+                        Icons.restaurant,
+                        ThemeConstants.successColor,
+                        () => Navigator.pushNamed(context, '/restaurants'),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Daily Health Tip Card (Modern Design)
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          ThemeConstants.primaryColor.withValues(alpha: 0.1),
+                          ThemeConstants.secondaryColor.withValues(alpha: 0.05),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: ThemeConstants.primaryColor.withValues(alpha: 0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: ThemeConstants.primaryColor.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.lightbulb_outline,
+                                  color: ThemeConstants.primaryColor,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                'Daily Health Tip',
+                                style: ThemeConstants.cardTitleStyle.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: ThemeConstants.primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            currentTip.message,
+                            style: ThemeConstants.bodyStyle.copyWith(
+                              fontSize: 15,
+                              height: 1.5,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          if (currentTip.source != null) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              '— ${currentTip.source}',
+                              style: ThemeConstants.statLabelStyle.copyWith(
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Old Quick Actions (Hidden, kept for compatibility)
+                  Visibility(
+                    visible: false,
+                    child: Card(
                       elevation: ThemeConstants.defaultElevation,
                       child: Padding(
                         padding:
@@ -240,6 +443,66 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       //Buttom Navbar
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
+    );
+  }
+
+  Widget _buildModernActionCard(BuildContext context, String title,
+      IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withValues(alpha: 0.15),
+              color.withValues(alpha: 0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 32),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: ThemeConstants.bodyStyle.copyWith(
+                  color: Colors.black87,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
