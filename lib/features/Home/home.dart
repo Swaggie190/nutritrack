@@ -326,44 +326,46 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Old Quick Actions (Hidden, kept for compatibility)
                   Visibility(
                     visible: false,
-                    child: Card(
-                      elevation: ThemeConstants.defaultElevation,
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.all(ThemeConstants.defaultPadding),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    child: Column(
+                      children: [
+                        Card(
+                          elevation: ThemeConstants.defaultElevation,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.all(ThemeConstants.defaultPadding),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.lightbulb,
-                                    color: ThemeConstants.primaryColor,
-                                    size: 24),
-                                const SizedBox(
-                                    width: ThemeConstants.smallPadding),
-                                Text('Daily Health Tip',
-                                    style: ThemeConstants.cardTitleStyle),
+                                Row(
+                                  children: [
+                                    Icon(Icons.lightbulb,
+                                        color: ThemeConstants.primaryColor,
+                                        size: 24),
+                                    const SizedBox(
+                                        width: ThemeConstants.smallPadding),
+                                    Text('Daily Health Tip',
+                                        style: ThemeConstants.cardTitleStyle),
+                                  ],
+                                ),
+                                const SizedBox(height: ThemeConstants.smallPadding),
+                                Text(currentTip.message,
+                                    style: ThemeConstants.bodyStyle),
+                                if (currentTip.source != null) ...[
+                                  const SizedBox(
+                                      height: ThemeConstants.smallPadding),
+                                  Text(
+                                    'Source: ${currentTip.source}',
+                                    style: ThemeConstants.statLabelStyle,
+                                  ),
+                                ],
                               ],
                             ),
-                            const SizedBox(height: ThemeConstants.smallPadding),
-                            Text(currentTip.message,
-                                style: ThemeConstants.bodyStyle),
-                            if (currentTip.source != null) ...[
-                              const SizedBox(
-                                  height: ThemeConstants.smallPadding),
-                              Text(
-                                'Source: ${currentTip.source}',
-                                style: ThemeConstants.statLabelStyle,
-                              ),
-                            ],
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: ThemeConstants.defaultPadding),
+                        const SizedBox(height: ThemeConstants.defaultPadding),
 
-                    // Quick Actions Section
-                    Card(
+                        // Quick Actions Section
+                        Card(
                       elevation: ThemeConstants.defaultElevation,
                       child: Padding(
                         padding:
@@ -428,12 +430,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
 
       floatingActionButton: FloatingActionButton(
