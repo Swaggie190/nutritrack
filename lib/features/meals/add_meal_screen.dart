@@ -4,6 +4,7 @@ import '../../core/constants/theme_constants.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/services/meal_service.dart';
 import '../../data/models/meal.dart';
+import '../../widgets/loading_button.dart';
 import 'package:provider/provider.dart';
 
 class AddMealScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
   late String _name;
   late int _calories;
   String? _notes;
+  bool _isLoading = false;
 
   // New fields
   MealType _mealType = MealType.other;
@@ -46,6 +48,8 @@ class _AddMealScreenState extends State<AddMealScreen> {
   Future<void> _addMeal() async {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
+
+      setState(() => _isLoading = true);
 
       try {
         final mealService = Provider.of<MealService>(context, listen: false);
@@ -102,6 +106,10 @@ class _AddMealScreenState extends State<AddMealScreen> {
             backgroundColor: ThemeConstants.errorColor,
           ),
         );
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     }
   }
@@ -401,22 +409,12 @@ class _AddMealScreenState extends State<AddMealScreen> {
                       const SizedBox(height: ThemeConstants.largePadding),
 
                       // Add Meal Button
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ThemeConstants.primaryColor,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: ThemeConstants.defaultPadding),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                ThemeConstants.defaultBorderRadius),
-                          ),
-                        ),
+                      LoadingButton(
+                        text: 'Add Meal',
+                        isLoading: _isLoading,
                         onPressed: _addMeal,
-                        child: Text(
-                          'Add Meal',
-                          style: ThemeConstants.bodyStyle
-                              .copyWith(color: Colors.white, fontSize: 16),
-                        ),
+                        width: double.infinity,
+                        icon: Icons.restaurant_menu,
                       ),
                     ],
                   ),

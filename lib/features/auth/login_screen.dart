@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:nutritrack/core/constants/app_constants.dart';
 import 'package:nutritrack/core/constants/theme_constants.dart';
 import 'package:nutritrack/core/services/user_service.dart';
+import 'package:nutritrack/widgets/loading_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,9 +17,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String? errorMessage;
+  bool _isLoading = false;
 
   //Login handler using the Userservice module.
   void handleLogin(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+      errorMessage = null;
+    });
+
     try {
       final userService = Provider.of<UserService>(context, listen: false);
       final userId = await userService.signInUser(
@@ -30,6 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         errorMessage = e.toString();
       });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -148,21 +161,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: ThemeConstants.defaultPadding),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ThemeConstants.primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: ThemeConstants.defaultPadding,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              ThemeConstants.defaultBorderRadius),
-                        ),
-                      ),
+                    LoadingButton(
+                      text: 'Login',
+                      isLoading: _isLoading,
                       onPressed: () => handleLogin(context),
-                      child: Text('Login',
-                          style: ThemeConstants.bodyStyle
-                              .copyWith(color: Colors.white)),
+                      width: double.infinity,
                     ),
                     const SizedBox(height: ThemeConstants.defaultPadding),
                     TextButton(

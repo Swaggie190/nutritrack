@@ -19,9 +19,10 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
-  late final ChatBotService _chatBotService;
+  ChatBotService? _chatBotService;
   bool _isLoading = false;
   File? _selectedFile;
+  String? _initError;
 
   //pre prepared message requests
   static const List<String> _suggestedQuestions = [
@@ -35,8 +36,19 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   @override
   void initState() {
     super.initState();
-    _chatBotService = CohereService();
-    _initializeChat();
+    _initializeService();
+  }
+
+  Future<void> _initializeService() async {
+    try {
+      _chatBotService = CohereService();
+      await _initializeChat();
+    } catch (e) {
+      setState(() {
+        _initError = 'Failed to initialize AI service. Please check your API key configuration in settings.';
+      });
+      _addErrorMessage(_initError!);
+    }
   }
 
   @override
@@ -112,12 +124,17 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
   //Handling the File processing So that the Bot can analize it.
   Future<void> _processFile(String fileName) async {
-    if (_selectedFile == null) return;
+    if (_selectedFile == null || _chatBotService == null) {
+      if (_chatBotService == null) {
+        _addErrorMessage("AI service is not available. Please check your configuration.");
+      }
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     try {
-      final response = await _chatBotService.getResponse(
+      final response = await _chatBotService!.getResponse(
         "Please analyze this file: $fileName",
         file: _selectedFile,
       );
@@ -136,6 +153,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   Future<void> _handleMessageSubmit(String text) async {
     if (text.trim().isEmpty) return;
 
+    if (_chatBotService == null) {
+      _addErrorMessage("AI service is not available. Please check your API key configuration.");
+      return;
+    }
+
     //Clear the message controller to ensure it is empty before adding a message
     _messageController.clear();
     _addUserMessage(text);
@@ -144,7 +166,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
     //handle ChatBot Response
     try {
-      final response = await _chatBotService.getResponse(text);
+      final response = await _chatBotService!.getResponse(text);
       _addBotMessage(response);
     } catch (e) {
       _addErrorMessage("Failed to get response. Please try again.");
@@ -169,20 +191,50 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          _buildSuggestedQuestions(),
-          Expanded(
-            child: Stack(
+      body: _initError != null && _messages.isEmpty
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline,
+                        size: 64, color: ThemeConstants.errorColor),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Service Unavailable',
+                      style: ThemeConstants.headingStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _initError!,
+                      style: ThemeConstants.bodyStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Go Back'),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : Column(
               children: [
-                _buildMessagesList(),
-                if (_isLoading) _buildLoadingIndicator(),
+                _buildSuggestedQuestions(),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      _buildMessagesList(),
+                      if (_isLoading) _buildLoadingIndicator(),
+                    ],
+                  ),
+                ),
+                _buildInputArea(),
               ],
             ),
-          ),
-          _buildInputArea(),
-        ],
-      ),
     );
   }
 
