@@ -169,6 +169,18 @@ class _NearbyRestaurantsPageState extends State<NearbyRestaurantsPage> {
                 urlTemplate:
                     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 subdomains: const ['a', 'b', 'c'],
+                userAgentPackageName: 'com.NT.app/nutritrack',
+                maxZoom: 19,
+                // Add caching and rate limiting
+                tileProvider: NetworkTileProvider(),
+              ),
+              // Attribution as required by OSM
+              const RichAttributionWidget(
+                attributions: [
+                  TextSourceAttribution(
+                    '© OpenStreetMap contributors',
+                  ),
+                ],
               ),
               MarkerLayer(
                 markers: [
