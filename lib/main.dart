@@ -9,6 +9,7 @@ import 'package:nutritrack/data/models/meal.dart';
 import 'package:nutritrack/data/models/user.dart' as userData;
 import 'package:nutritrack/data/reposotories/meal_repository.dart';
 import 'package:nutritrack/features/Home/home.dart';
+import 'package:nutritrack/features/main_navigation.dart';
 import 'package:nutritrack/core/services/auth_service.dart';
 import 'package:nutritrack/features/auth/register_screen.dart';
 import 'package:nutritrack/features/chat/chatbot_screen.dart';
@@ -127,9 +128,10 @@ class NutriTrackApp extends StatelessWidget {
       routes: {
         '/': (context) => _handleAuthState(context),
         '/login': (context) => const LoginScreen(),
-        '/profile': (context) => const ProfileScreen(),
+        '/home': (context) => const MainNavigation(initialIndex: 0),
+        '/profile': (context) => const MainNavigation(initialIndex: 1),
+        '/meals': (context) => const MainNavigation(initialIndex: 2),
         '/update_user': (context) => const UpdateUserScreen(),
-        '/meals': (context) => const MealScreen(),
         '/add_meal': (context) => const AddMealScreen(),
         '/meal_statistics': (context) => const MealStatisticsScreen(),
         '/edit_meal': (context) => MealEditCard(
@@ -138,14 +140,6 @@ class NutriTrackApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/chat': (context) => const ChatBotScreen(),
         '/restaurants': (context) => const NearbyRestaurantsPage(),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/home') {
-          return MaterialPageRoute(
-            builder: (context) => const HomeScreen(),
-          );
-        }
-        return null;
       },
       debugShowCheckedModeBanner: false,
     );
@@ -182,7 +176,7 @@ class NutriTrackApp extends StatelessWidget {
             }
 
             if (userSnapshot.hasData && userSnapshot.data != null) {
-              return const HomeScreen();
+              return const MainNavigation();
             } else {
               return const LoginScreen();
             }
